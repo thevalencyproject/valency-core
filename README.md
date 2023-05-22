@@ -1,1 +1,1 @@
-# valency-core
+# Valency Core
