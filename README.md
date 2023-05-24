@@ -15,3 +15,4 @@
 ### LZMA Compression Algorithm
 ### Traceable Ring Signatures
 ### GUI Framework
+### Custom Types
