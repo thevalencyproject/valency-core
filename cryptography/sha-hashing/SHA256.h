@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <string>
+#include <string.h>
 
 
 class SHA256 {
@@ -43,8 +44,9 @@ private:
 public:
     SHA256() {}
 
-    // Use this function to hash your data!
-    std::string hash(char* data);   
+    /* Use this function to hash your data:
+    char data[] = "text to hash"; std::string hash = sha.hash(data);*/
+    std::string hash(char* data);
 };
 
 #endif
