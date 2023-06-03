@@ -1,3 +1,6 @@
+#ifndef CLIENT_H
+#define CLIENT_H
+
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -32,3 +35,5 @@ public:
     bool connectToServer(std::string ip, int port);
     void disconnect();
 };
+
+#endif
