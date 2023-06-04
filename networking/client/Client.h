@@ -21,7 +21,7 @@ private:
     char buffer[4096];  
     int receivedBytes;
 
-    bool createSocket(std::string ip, int port);
+    bool createSocket(std::string ip, int* port);
     bool initialiseConnection();
 
     bool communicate();     // Modify this function to achieve your desired outcomes!
@@ -32,7 +32,7 @@ public:
 
     std::string errorLog;   // If anything fails, this will automatically be set to the relevant error message
 
-    bool connectToServer(std::string ip, int port);
+    bool connectToServer(std::string* ip, int* port);
     void disconnect();
 };
 

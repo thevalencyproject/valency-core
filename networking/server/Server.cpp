@@ -36,7 +36,7 @@ Server::~Server() {
     stop();
 }
 
-bool Server::createSocket(int port) {
+bool Server::createSocket(int* port) {
     listeningSocket = socket(AF_INET, SOCK_STREAM, 0);  //IPv4
     if(listeningSocket == -1) {
         errorLog = "Error creating socket";
@@ -46,7 +46,7 @@ bool Server::createSocket(int port) {
     // Bind the listening socket to an IP address and port
     memset(&hint, 0, hintSize);                         // Zero the hint
     hint.sin_family = AF_INET;                          // Specify an IPv4 Type
-    hint.sin_port = htons(port);                        // Specify the port
+    hint.sin_port = htons(*port);                        // Specify the port
     inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr);      // Sets any available IP Address
     if(bind(listeningSocket, (sockaddr*)&hint, sizeof(hint)) == -1) {
         errorLog = "";
@@ -71,7 +71,7 @@ bool Server::acceptConnection() {
     clientSockets.push_back(clientSocket);      // Add the clientSocket to the client vector
 }
 
-bool Server::run(int port) {
+bool Server::run(int* port) {
     if(createSocket(port) == 1)     // Create a listening socket
         return 1;
     

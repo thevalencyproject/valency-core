@@ -44,23 +44,23 @@ Client::~Client() {
     disconnect();
 }
 
-bool Client::connectToServer(std::string ip, int port) {
-    if(createSocket(ip, port) == 1 || initialiseConnection() == 1)
+bool Client::connectToServer(std::string* ip, int* port) {
+    if(createSocket(*ip, port) == 1 || initialiseConnection() == 1)
         return 1;
     
     return communicate();
 }
 
-bool Client::createSocket(std::string ip, int port) {
+bool Client::createSocket(std::string ip, int* port) {
     commSocket = socket(AF_INET, SOCK_STREAM, 0);   // Initialise the socket and check for errors
     if(commSocket == -1) {
         errorLog = "Error creating the communication socket";
         return 1;
     }
-    
+
     // Initialise the hint
     hint.sin_family = AF_INET;                          // Specify an IPv4 Type
-    hint.sin_port = htons(port);                        // Specify the port
+    hint.sin_port = htons(*port);                        // Specify the port
     inet_pton(AF_INET, ip.c_str(), &hint.sin_addr);     // Specify the IP Address
 
     return 0;

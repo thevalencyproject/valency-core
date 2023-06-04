@@ -27,7 +27,7 @@ private:
 
     char buffer[4096];
 
-    bool createSocket(int port);
+    bool createSocket(int* port);
     bool acceptConnection();                     // Accepts/Denies an Incoming connection request on the listening socket
 
     bool handleConnection(int clientSocket);     // Modify this function to achieve your desired outcomes!
@@ -39,7 +39,7 @@ public:
     std::string errorLog;           // If anything fails, this will automatically be set to the relevant error message
     std::string connectionLog;      // If a connection fails, this will automatically be set to the relevant error message
 
-    bool run(int port);
+    bool run(int* port);
     void stop();
 };
 
