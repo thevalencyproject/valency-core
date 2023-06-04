@@ -9,7 +9,7 @@ bool Client::communicate() {
         // Send something to the server
         if(send(commSocket, message.c_str(), message.size() + 1, 0) == -1) {
             errorLog = "Error sending data to the server";
-            return 0;
+            return 1;
         }
 
         // Clear the buffer and wait for a response
@@ -32,6 +32,7 @@ bool Client::communicate() {
     }
 
     disconnect();   // Disconnect from the server
+    return 0;
 }
 
 
@@ -44,8 +45,8 @@ Client::~Client() {
 }
 
 bool Client::connectToServer(std::string ip, int port) {
-    if(createSocket(ip, port) == 0 || initialiseConnection() == 0)
-        return 0;
+    if(createSocket(ip, port) == 1 || initialiseConnection() == 1)
+        return 1;
     
     return communicate();
 }
@@ -54,7 +55,7 @@ bool Client::createSocket(std::string ip, int port) {
     commSocket = socket(AF_INET, SOCK_STREAM, 0);   // Initialise the socket and check for errors
     if(commSocket == -1) {
         errorLog = "Error creating the communication socket";
-        return 0;
+        return 1;
     }
     
     // Initialise the hint
@@ -62,17 +63,17 @@ bool Client::createSocket(std::string ip, int port) {
     hint.sin_port = htons(port);                        // Specify the port
     inet_pton(AF_INET, ip.c_str(), &hint.sin_addr);     // Specify the IP Address
 
-    return 1;
+    return 0;
 }
 
 bool Client::initialiseConnection() {
     if(connect(commSocket, (sockaddr*)&hint, sizeof(hint)) == -1) {
         errorLog = "Error connecting to the server";
-        return 0;
+        return 1;
     }
 
     connected = 1;
-    return 1;
+    return 0;
 }
 
 void Client::disconnect() {
