@@ -119,3 +119,43 @@ AESEncryption::~AESEncryption() {
     key.clear();            // Clear sensitive data
     expandedKeys.clear();   //
 }
+
+std::vector<unsigned char> AESEncryption::encrypt(std::vector<unsigned char>* k, std::vector<unsigned char>* d) {
+    std::vector<unsigned char> output;  // Temporary vector to hold encryption output
+    
+    key = *k;
+    data = *d;
+
+    int repeat = ceil(data.size() / 16);
+    int completedBytes = 0;
+
+    keyExpansion();     // Expand the key into separate keys that are used for each round
+
+    for(int i = 0; i < repeat; i++) {
+        for(int j = 0; j < 16; j++) { state[i] = data[completedBytes + j]; }    // Set state to next 16 bytes
+
+        addRoundKey();                      // Initial Round
+        for(int j = 0; j < rounds; j++) {   // Main Rounds
+            subBytes();
+            shiftRows();
+            mixColumns();
+            addRoundKey();
+        }
+        subBytes();                          //
+        shiftRows();                         // Final Round
+        addRoundKey();                       //
+
+        for(int j = 0; j < 16; j++) { output.push_back(state[j]); }     // Add the 16 byte section to output
+        completedBytes = completedBytes + 16;
+    }
+
+    // Clear sensitive data and return the output
+    data.clear();
+    key.clear();
+    expandedKeys.clear();
+    return output;
+}
+
+std::vector<unsigned char> AESEncryption::decrypt(std::vector<unsigned char>* k, std::vector<unsigned char>* d) {
+
+}
