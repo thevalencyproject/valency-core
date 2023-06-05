@@ -1,7 +1,7 @@
 #include "AES-Encryption.h"
 
 
-void AESEncryption::checkPadding(std::vector<char> data) {
+void AESEncryption::checkPadding(std::vector<unsigned char> data) {
     int remainder = data.size() % 16;
 
     for(int i = 0; i < remainder; i++)
@@ -9,6 +9,7 @@ void AESEncryption::checkPadding(std::vector<char> data) {
 }
 
 void AESEncryption::keyExpansion() {
+    expandedKeys.resize((keySize + 1) * rounds);                     // Create space for the expanded key
     for(int i = 0; i < keySize; i++) { expandedKeys[i] = key[i]; }   // The first 16 bytes are the original key
 
     int bytesGenerated = keySize;                  // Keep track of the bytes created
@@ -120,13 +121,15 @@ AESEncryption::~AESEncryption() {
     expandedKeys.clear();   //
 }
 
-std::vector<unsigned char> AESEncryption::encrypt(std::vector<unsigned char>* k, std::vector<unsigned char>* d) {
+std::vector<unsigned char> AESEncryption::encrypt(std::vector<unsigned char> k, std::vector<unsigned char> d) {
     std::vector<unsigned char> output;  // Temporary vector to hold encryption output
     
-    key = *k;
-    data = *d;
+    key = k;
+    data = d;
 
-    int repeat = ceil(data.size() / 16);
+    checkPadding(data);
+
+    int repeat = data.size() / 16;
     int completedBytes = 0;
 
     keyExpansion();     // Expand the key into separate keys that are used for each round
@@ -156,6 +159,6 @@ std::vector<unsigned char> AESEncryption::encrypt(std::vector<unsigned char>* k,
     return output;
 }
 
-std::vector<unsigned char> AESEncryption::decrypt(std::vector<unsigned char>* k, std::vector<unsigned char>* d) {
+std::vector<unsigned char> AESEncryption::decrypt(std::vector<unsigned char> k, std::vector<unsigned char> d) {
 
 }

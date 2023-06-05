@@ -1,9 +1,10 @@
 #ifndef AESENCRYPTION_H
 #define AESENCRYPTION_H
 
+#include <cmath>
 #include <vector>
 #include <string>
-#include <string.h>     // memcpy();
+#include <string.h>
 
 
 /* AESEncryption
@@ -14,7 +15,7 @@ Encryption Steps:
 1. Key Expansion
 2. Initial Round:
     AddRoundKey(XOR the key)
-3. Rounds (repeated 10, 12, or 14 times for 128 - 256 bit encryption):
+3. Rounds (repeated 10, 12, or 14 times for 128, 196, or 256 bit encryption):
     SubBytes
     ShiftRows
     MixColumns
@@ -36,7 +37,7 @@ private:
     std::vector<unsigned char> key;
     
     // Add's padding to the data to make it divisible by 16 bytes (AES-Encryption encrypts in 16 byte blocks)
-    void checkPadding(std::vector<char> data);
+    void checkPadding(std::vector<unsigned char> data);
 
     // Algorithm Data
     std::vector<unsigned char> expandedKeys;
@@ -124,12 +125,13 @@ private:
                                   ,0x8c ,0xa1 ,0x89 ,0x0d ,0xbf ,0xe6 ,0x42 ,0x68 ,0x41 ,0x99 ,0x2d ,0x0f ,0xb0 ,0x54 ,0xbb ,0x16};
 
 public:
-    AESEncryption(int keySize);     // Input determines the bitsize - 128, 192, or 256 bit
+    AESEncryption() {};
+    AESEncryption(int size);     // Input determines the bitsize - 128, 192, or 256 bit
     ~AESEncryption();               // Clears sensitive input
 
     // Encrypts or Decrypts the inputted data using the inputted keys
-    std::vector<unsigned char> encrypt(std::vector<unsigned char>* key, std::vector<unsigned char>* data);
-    std::vector<unsigned char> decrypt(std::vector<unsigned char>* key, std::vector<unsigned char>* data);
+    std::vector<unsigned char> encrypt(std::vector<unsigned char> k, std::vector<unsigned char> d);
+    std::vector<unsigned char> decrypt(std::vector<unsigned char> k, std::vector<unsigned char> d);
 };
 
 #endif
