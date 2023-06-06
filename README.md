@@ -75,6 +75,14 @@ Decryption is currently not supported - an implementation will be coming within 
 ## File Reader and Writer
 
 ## Quicksort
+**How to Use It:**
+1. Include Quicksort.h: ```#include "Quicksort.h"```
+2. Create a QuickSort Object: ```QuickSort qsrt;```
+3. Get some kind of input - the sort() function takes an array of any numerical type: <br> 
+```int n = 10; float array[n] = {15.23, 85.15, 25.0, 96.87, 64.45, 13.15, 90.25, 87.85, 36.97, 25.35};```
+4. Call the sort function (takes in the leftmost index, and the pivot - usually rightmost index) - this will sort the input array: ```qsrt.sort(array, 0, n-1);```
+
+<br>
 
 ## SHA-256 Hashing Algorithm
 **How to Use It:** 
