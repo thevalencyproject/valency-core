@@ -24,7 +24,13 @@ private:
     void fxMulX(int *p, int size, int *resultPolynomial);                                       // f(x) * x
     void scalarMultiplication(int *p, int size, int s, int *resultPolynomial);                  // Multiply p by s: f(x) * s, where 's' is a constant
     void inversePolynomial(int *p, int size, int mod, char modPower, int *resultPolynomial);    // Inverse Polynomial of p: x^k - x^(k-1) + ... + x^2 + 1 -> {1, 0, 1, ..., -1, 1}
-
+    
+    // Conversions
+    void stringToArray(std::string message, int *array);
+    std::string arrayToString(int *array, int size);
+    void decimalToHex(int *decimal, char *hex);
+    void hexToDecimal(char *hex, int *decimal);
+    
     // Generators
     void fPolynomialGenerator(int size, int *resultPolynomial);                                     // f Polynomial Generator
     void gPolynomialGenerator(int size, int *resultPolynomial);                                     // g, r polynomial generator
