@@ -391,8 +391,3 @@ NTRUencrypt::NTRUencrypt(int strength) {
         N = 251, size = 251, modP = 3, modQ = 128, df = 50, dg = 24, dr = 16;
     }
 }
-
-NTRUencrypt::~NTRUencrypt() {
-    N = 0, size = 0, modP = 0, modQ = 0, df = 0, dg = 0, dr = 0;
-    qDeg = NULL;
-}
