@@ -59,6 +59,43 @@ Decryption is currently not supported - an implementation will be coming within 
 <br>
 
 ## NTRUencrypt Asymmetric Encryption
+**Selectable Parameters**<br>
+This implementation allows for selectable parameters when calling the constructor. The chosen parameters for this implementation of NTRUencrypt come from the table:
+|               | N             | p     | q     | df    | dg    | dr    |       | Constructor Call |
+|:-------------:|:-------------:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:----------------:|
+| NTRU167:2     | 167           | 2     | 127   | 45    | 35    | 18    |       | 1                |
+| NTRU167:3     | 167           | 3     | 128   | 61    | 20    | 18    |       | 2                |
+| NTRU251:2     | 251           | 2     | 127   | 35    | 35    | 22    |       | 3                |
+| NTRU251:3     | 251           | 3     | 128   | 50    | 24    | 16    |       | 4                |
+| NTRU503:2     | 503           | 2     | 253   | 155   | 100   | 65    |       | 5                |
+| NTRU503:3     | 503           | 3     | 256   | 21    | 72    | 55    |       | 6                |
+
+<p align="center">
+Source: Cherckesova, L. et al. (2020) ‘Post-quantum cryptosystem NTRUEnCrypt and its advantage over pre – quantum cryptosystem RSA’, E3S Web of Conferences, 224, pp. 4–4. doi:10.1051/e3sconf/202022401037.
+</p>
+<br>
+
+**Setup**
+1. Include NTRUencrypt.h: ```#include "NTRUencrypt.h"```
+2. Create a NTRUencrypt Object with your desired parameters (see table):<br>
+```NTRUencrypt ntru = NTRUencrypt(4)```
+<br>
+
+**Key Generation** <br>
+1. Get a random seed - this could be from concatenating a login, or through the use of some random() function: <br>
+```int seed = random("LOGIN" + "PASSWORD");```
+2. Generate a private key using the random seed: ```std::string private = ntru.generatePrivateKey(seed);```
+3. Generate a public key using the private key: ```std::string public = ntru.generatePublicKey(private);```
+<br>
+
+**Encryption** <br>
+Instructions coming once implementation is complete (~1 to 2 days)
+<br>
+
+**Decryption** <br>
+Instructions coming once implementation is complete (~1 to 2 days)
+
+<br>
 
 ## Random Algorithm
 **How to Use It:**
