@@ -3,7 +3,9 @@
 
 #include <cmath>
 #include <string>
+#include <vector>
 #include <cstring>
+#include <sstream>
 
 
 class NTRUencrypt {
@@ -34,19 +36,17 @@ private:
     void publicKeyGenerator(int *fPolynomial, int *gPolynomial, int *resultPolynomial);   // h open key generation
     
     // Conversions
+    void charToArray(char c, int *array);
+    char arrayToChar(int *array);
     void stringToArray(std::string message, int *array);
     std::string arrayToString(int *array, int size);
-    void decimalToHex(int *decimal, char *hex);
-    void hexToDecimal(char *hex, int *decimal);
+    void decimalToHex(int *decimal, std::string *hex);  // Called by: hexToDecimal(&hex, &decimal);
+    void hexToDecimal(std::string *hex, int *decimal);
 
     // Encryption + Decryption
     void encryption(int *mPolynomial, int *hPolynomial, int *resultPolynomial);                        // Encryption, m = secret polynomial, h = public polynomial
     void encryption(int *mPolynomial, int *fPolynomial, int *gPolynomial, int *resultPolynomial);      // Encrypt when the public polynomial isnt known
     void decryption (int *cipherPolynomial, int *fPolynomial, int *fpPolynomial, int *resultPolynomial);
-    
-    // std::string Encryption + Decryption
-    void stringEncryption(std::string data, int *fPolynomial, int *gPolynomial, int *resultPolynomial);
-    void stringDecryption(int *cipherPolynomial, int *fPolynomial, int *fpPolynomial, std::string output);
 
 public:
     NTRUencrypt(int strength);
