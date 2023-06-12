@@ -472,7 +472,7 @@ std::string NTRUencrypt::encrypt(std::string receiverKey, std::string data) {
 
     // Convert the output cipher to string
     std::string output;
-    output.resize(dataVect.size());
+    output.resize(dataVect.size()); 
     memcpy(&output, cipher, sizeof(cipher));
     output = std::to_string(dataVect.size()) + ":" + output;    // Add the number of indexes in the output to the front
 
