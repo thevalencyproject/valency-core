@@ -9,9 +9,6 @@ int NTRUencrypt::polynomialDegree(int *p) {
 
         i--;
     }
-
-    errorLog = "Invalid Polynomial Degree";
-    return 1;
 }
 
 int NTRUencrypt::modularInverse(int p, int m) {
@@ -67,6 +64,11 @@ void NTRUencrypt::polynomialMultiplication(int *p1, int *p2, int *resultPolynomi
 
     for(int i = 1; i < size - 1; i++) {
         fxMulX(temp1,temp1);
+
+        for(int j = 0; j < size; j++) {
+            scalarMultiplication(temp1, p1[i], temp2);
+            output[j] = output[j] + temp1[j];
+        }
     }
 
     memcpy(resultPolynomial, output, size * 2);     // Copy the output the the resultPolynomial input
@@ -201,7 +203,7 @@ void NTRUencrypt::inversePolynomial(int *p, int mod, char modPower, int *resultP
 
 
 // Generator Functions
-void NTRUencrypt::fPolynomialGenerator(int df, int *resultPolynomial) {
+void NTRUencrypt::fPolynomialGenerator(int df, int seed, int *resultPolynomial) {
     int *output = new int [size];
     int number;
     int i = 0;
@@ -209,7 +211,7 @@ void NTRUencrypt::fPolynomialGenerator(int df, int *resultPolynomial) {
     memset(output, 0, size * 2);
 
     while(i < df) {
-        number = rand() % (size - 1);
+        number = seed % (size - 1);
         if(output[number] == 0) {
             output[number] = 1;
             i++;
@@ -218,7 +220,7 @@ void NTRUencrypt::fPolynomialGenerator(int df, int *resultPolynomial) {
 
     i = 0;
     while(i < (df - 1)) {
-        number = rand() % (size - 1);
+        number = seed % (size - 1);
         if(output[number] == 0) {
             output[number] = -1;
             i++;
@@ -229,7 +231,7 @@ void NTRUencrypt::fPolynomialGenerator(int df, int *resultPolynomial) {
     delete[] output;
 }
 
-void NTRUencrypt::gPolynomialGenerator(int dg, int *resultPolynomial) {
+void NTRUencrypt::gPolynomialGenerator(int dg, int seed, int *resultPolynomial) {
     int *output = new int [size];
     int number;
     int i = 0;
@@ -237,7 +239,7 @@ void NTRUencrypt::gPolynomialGenerator(int dg, int *resultPolynomial) {
     memset(output, 0, size * 2);
 
     while(i < dg) {
-        number = rand() % (size - 1);
+        number = seed % (size - 1);
         if(output[number] == 0) {
             output[number] = 1;
             i++;
@@ -246,7 +248,7 @@ void NTRUencrypt::gPolynomialGenerator(int dg, int *resultPolynomial) {
 
     i = 0;
     while(i < (dg)) {
-        number = rand() % (size - 1);
+        number = seed % (size - 1);
         if(output[number] == 0) {
             output[number] = -1;
             i++;
@@ -265,7 +267,7 @@ void NTRUencrypt::publicKeyGenerator(int *fPolynomial, int *gPolynomial, int *re
     polynomialMultiplication(output, gPolynomial, output);
 
     if(qDeg < 1)
-        errorLog = "Wrong input of exponent of modulus q: default value of 1 was used";
+        errorLog = "Wrong inpout of exponent of modulus q: default value of 1 was used";
     if(qDeg >= 1)
         modulusReduction(output, (int) pow((double) modQ, (double) qDeg), output);
     
@@ -277,7 +279,7 @@ void NTRUencrypt::publicKeyGenerator(int *fPolynomial, int *gPolynomial, int *re
 void NTRUencrypt::encryption(int *mPolynomial, int *hPolynomial, int *resultPolynomial) {
     int *output = new int [size];
     int *rPolynomial = new int [size];
-    gPolynomialGenerator(dg, rPolynomial);  // Generate the r polynomial
+    gPolynomialGenerator(dg, rand(), rPolynomial);  // Generate the r polynomial
 
     for(int i = 0; i < size; i++) {
         mPolynomial[i] = mPolynomial[i] % modP;
@@ -390,7 +392,6 @@ NTRUencrypt::NTRUencrypt(int strength) {
     case 4: N = 251, size = 251, modP = 3, modQ = 128, df = 50, dg = 24, dr = 16; break;
     case 5: N = 503, size = 503, modP = 2, modQ = 253, df = 155, dg = 100, dr = 65; break;
     case 6: N = 503, size = 503, modP = 3, modQ = 256, df = 21, dg = 72, dr = 55; break;
-    case 7: N = 252, size = 252, modP = 2, modQ = 127, df = 35, dg = 35, dr = 22; break;
     default:
         errorLog = errorLog + "Invalid Constructor Parameters, setting to NTRU251:3";
         N = 251, size = 251, modP = 3, modQ = 128, df = 50, dg = 24, dr = 16;
@@ -401,11 +402,8 @@ std::string NTRUencrypt::generatePrivateKey(int seed) {
     // Create the arrays and generate the polynomials
     int *fPolynomial = new int [size];
     int *gPolynomial = new int [size];
-    
-    srand(seed);            // Wierd workaround
-
-    fPolynomialGenerator(df, fPolynomial);
-    gPolynomialGenerator(dg, gPolynomial);
+    fPolynomialGenerator(df, seed, fPolynomial);
+    gPolynomialGenerator(dg, seed, gPolynomial);
 
     // Cycle through every index in f and g polynomials, pushing data onto the end of the string
     std::string output;
@@ -416,47 +414,6 @@ std::string NTRUencrypt::generatePrivateKey(int seed) {
         output = output + "." + std::to_string(gPolynomial[i]);
     delete[] gPolynomial;
 
-    return output;
-}
-
-std::string NTRUencrypt::generatePublicKey(std::string privateKey) {
-    //publicKeyGenerator(int *fPolynomial, int *gPolynomial, int *resultPolynomial)
-    std::vector<int> indexPosition;
-    for(int i = 0; i < privateKey.size(); i++) {
-        if(privateKey[i] == '.') {
-            indexPosition.push_back(i);
-        }
-    }
-    for(int i = 0; i < indexPosition.size(); i++) {
-        //std::cout << std::to_string(indexPosition[i]) << std::endl;
-    }
-    // fPolynlmial
-    int *fPolynomial = new int [size];
-    for(int i = 1; i < size; i++) {
-        std::cout << privateKey.substr(indexPosition[i] + 1, indexPosition[i] - indexPosition[i - 1] - 1 ) << std::endl;
-        //fPolynomial[i] = stoi(privateKey.substr(indexPosition[i] + 1, indexPosition[i] - prevPos - 1));
-    }
-
-
-    // gPolynomial
-    int *gPolynomial = new int [size];
-    /*
-    for(int i = size + 1; i < (size * 2); i++) {
-        std::cout << privateKey.substr(indexPosition[i] + 1, indexPosition[i] - prevPos - 1);
-        //gPolynomial[i] = stoi(privateKey.substr(indexPosition[i] + 1, indexPosition[i] - prevPos - 1));
-    }*/
-
-    int *result = new int [size];
-    publicKeyGenerator(fPolynomial, gPolynomial, result);
-
-    // Convert result into a string:
-    std::string output;
-    for(int i = 0; i < size; i++)
-        output = output + "." + std::to_string(result[i]);
-
-    delete[] fPolynomial;
-    delete[] gPolynomial;
-    delete[] result;
     return output;
 }
 
@@ -515,7 +472,7 @@ std::string NTRUencrypt::encrypt(std::string receiverKey, std::string data) {
 
     // Convert the output cipher to string
     std::string output;
-    output.resize(dataVect.size());
+    output.resize(dataVect.size()); 
     memcpy(&output, cipher, sizeof(cipher));
     output = std::to_string(dataVect.size()) + ":" + output;    // Add the number of indexes in the output to the front
 
