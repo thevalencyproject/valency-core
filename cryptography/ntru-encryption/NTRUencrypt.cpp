@@ -364,7 +364,17 @@ void NTRUencrypt::stringToArray(std::string message, int *array) {
 std::string NTRUencrypt::arrayToString(int *array, int size) {
     std::string output;
     int arraySize = size / 16;
+    char *s = new char[arraySize + 1];
+    int a[16];
 
+    for(int i = 0; i < arraySize; i++) {
+        for(int j = 0; j < 16; j++)
+            a[j] = array[(j + i) * 16];
+        
+        s[i] = arrayToChar(a);
+    }
+    s[arraySize] = '\0';
+    output = std::string(s);
 
     return output;
 }
@@ -522,89 +532,53 @@ std::string NTRUencrypt::encrypt(std::string receiverKey, std::string data) {
 }
 
 std::string NTRUencrypt::decrypt(std::string privateKey, std::string data) {
-    /*std::vector<int> indexPosition;
+    privateKey = '.' + privateKey + '.';
+
+    // Data
+    int dataSize;
+    for(int i = 0; i < data.size(); i++) {
+        if(data[i] == '.') {
+            dataSize = stoi(data.substr(0, i - 1));
+            data.erase(0, i - 1);
+            break;
+        }
+    }
+    int *cipher = new int [dataSize];
+    std::vector<int> indexPosition;
     for(int i = 0; i < data.size(); i++) {
         if(data[i] == '.') {
             indexPosition.push_back(i);
         }
     }
-    int *dataPolynomial = new int [indexPosition.size() - 1];
-    for(int i = 0; i < indexPosition.size(); i++) {
-        dataPolynomial[i] = stoi(data.substr(indexPosition[i] + 1, indexPosition[i + 1] - indexPosition[i] - 1));
+    for(int i = 0; i < dataSize; i++) {
+        cipher[i] = stoi(data.substr(indexPosition[i] + 1, indexPosition[i + 1] - indexPosition[i] - 1));
     }
 
-    int cipherSize = indexPosition.size();
-
-    // Receiver Polynomial Int Array Creation
-    indexPosition.clear();  // Clear the vector for use below*/
-
-
-
-    // Get the total index of the data polynomial from the string (stored in a header before the first '.')
-    //    + Remove the header from the input data
-    std::string index;
-    std::string header = data;
-    for(int i = 0; i < data.size(); i++) {
-        if(data[i] == '.') {    // Once the first '.' is reached, the index can be read;
-            break;
-        } else {
-            index = index + data[i];
-            header.erase(i, 1);
-        }
-    }
-    int dataSize = stoi(index);
-    header.erase(0, 1);   // Remove the '.'
-
-    // Create the cipher array
-    int *cipher = new int [dataSize];
-    memcpy(&cipher, &header, sizeof(cipher));
-
-
-    // Get the f Polynomial from the private key
-    // Get the number of '.'s and their positions
-    std::vector<int> breakPositions;
-    for(int i = 0; i < privateKey.size(); i++)
-        if(privateKey[i] == '.')
-            breakPositions.push_back(i);
-
-    std::string fPolynomialString = data.substr(0, breakPositions[df]);     // fPolynomialString should look like -> 124BS.12589VBS.096CD.
-
-    // Create an int array from the fPolynomial string
-    int count = 0, prevCount = 0, hex = 0;
-    std::vector<int> privateVect;
-    std::string temp;
+    // fPolynomial
+    indexPosition.clear();
     for(int i = 0; i < privateKey.size(); i++) {
         if(privateKey[i] == '.') {
-            for(int i = prevCount; i < count; i++)
-                temp = temp + privateKey[i];
-            
-            hexToDecimal(&temp, &hex);
-            privateVect.push_back(hex);
-
-            count++;
-            prevCount = count;
-            temp = "";
-        } else {
-            count++;
+            indexPosition.push_back(i);
         }
     }
+    int *fPolynomial = new int [size];
+    for(int i = 0; i < size; i++) {
+        fPolynomial[i] = stoi(privateKey.substr(indexPosition[i] + 1, indexPosition[i + 1] - indexPosition[i] - 1));
+    }
 
-    int *fPolynomial = new int [df];
-    std::copy(privateVect.begin(), privateVect.end(), fPolynomial);
-    
-    // Generating fpPolynomial using the fPolynomial
-    int *fpPolynomial = new int [df];
-    inversePolynomial(fPolynomial, modP, 1, fpPolynomial);
+    // fpPolynomial
+    int *fpPolynomial = new int [size];
+    inversePolynomial(fPolynomial, modP, modQ, fpPolynomial);
 
-    // Now that we have all correct variable types, we can input them into the given function and return the string converted output array
-    std::string message;
-    int *output = new int [dataSize];
-    decryption(cipher, fPolynomial, fpPolynomial, output);
-    message = arrayToChar(output);
-
-    delete[] cipher;
-    delete[] fPolynomial;
+    // Decryption
+    int *result = new int [dataSize];
+    decryption(cipher, fPolynomial, fpPolynomial, result);
     delete[] fpPolynomial;
-    delete[] output;
-    return message;
+    delete[] fPolynomial;
+    delete[] cipher;
+    
+    // Output
+    std::string output = arrayToString(result, dataSize);
+    delete[] result;
+    return output;
 }
