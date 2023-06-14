@@ -6,6 +6,7 @@
 #include <vector>
 #include <cstring>
 #include <sstream>
+#include <iostream>
 
 
 class NTRUencrypt {
@@ -40,8 +41,8 @@ private:
     std::string decodeString(std::string *key);
 
     // Generators: f & g Polynomial make up the private key, and the h Polynomial is the public key
-    void fPolynomialGenerator(int df, int seed, int *resultPolynomial);                   // f Polynomial Generator - First half of a private key
-    void gPolynomialGenerator(int dg, int seed, int *resultPolynomial);                   // g and r polynomial generator - Second half of a private key (r is the random polynomial)
+    void fPolynomialGenerator(int df, int *resultPolynomial);                   // f Polynomial Generator - First half of a private key
+    void gPolynomialGenerator(int dg, int *resultPolynomial);                   // g and r polynomial generator - Second half of a private key (r is the random polynomial)
     void publicKeyGenerator(int *fPolynomial, int *gPolynomial, int *resultPolynomial);   // h Polynomial Generator - The public key
 
     // Encryption + Decryption: m Polynomial is the plaintext message represented in Polynomial form, fpPolynomial is the modular inverse of fPolynomial modulo 'p'
@@ -50,7 +51,6 @@ private:
 
 public:
     NTRUencrypt(int strength);
-    ~NTRUencrypt();
 
     std::string errorLog;
 
