@@ -383,7 +383,7 @@ void NTRUencrypt::hexToDecimal(std::string *hex, int *decimal) {
     s >> std::hex >> *decimal;
 }
 
-// Public Functions Below
+
 NTRUencrypt::NTRUencrypt(int strength) {
     switch(strength) {
     case 1: N = 167, size = 167, modP = 2, modQ = 127, df = 45, dg = 35, dr = 18; break;
