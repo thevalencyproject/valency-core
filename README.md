@@ -10,6 +10,9 @@ Each module in this repository is designed to be modular for reuse in other cool
 7. File Reader and Writer
 8. Quicksort
 9. SHA-256 Hashing Algorithm
+10. LZMA Compression Algorithm
+11. Traceable Ring Signatures
+12. GUI Framework
 <br>
 
 ## Networking Framework
