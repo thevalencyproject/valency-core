@@ -484,8 +484,10 @@ std::string NTRUencrypt::encrypt(std::string receiverKey, std::string data) {
             d[i] = 0;
         
         encryption(d, receiverPolynomial, cipher);
-        memcpy(&output, cipher, size * 2);
-        output = std::to_string(size) + '.' + output;
+
+        output = std::to_string(size);
+        for(int i = 0; i < size; i++)
+            output = output + '.' + std::to_string(cipher[i]);
 
         delete[] d;
         delete[] cipher;
@@ -508,7 +510,9 @@ std::string NTRUencrypt::encrypt(std::string receiverKey, std::string data) {
             for(int j = 0; j < size; j++)
                 cipher[j + i * size] = d[j];    // Try swapping for d[i] if it doesnt work :)
 
-            output = std::to_string(size) + '.' + output;
+            output = std::to_string(N * size);
+            for(int i = 0; i < (N * size); i++)
+                output = output + '.' + std::to_string(cipher[i]);
 
             delete[] d;
             delete[] cipher;
