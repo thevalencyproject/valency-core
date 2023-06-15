@@ -55,22 +55,29 @@ void NTRUencrypt::polynomialSum(int *p1, int *p2, int *resultPolynomial) {
 
 void NTRUencrypt::polynomialMultiplication(int *p1, int *p2, int *resultPolynomial) {
     int *output = new int [size];
-    int *temp1 = new int [size];
-    int *temp2 = new int [size];
+    int *tempArray = new int [size];
+    int *tempArray1 = new int [size];
 
-    int resultSize = ((sizeof(p1) / sizeof(int)) - 1) + (sizeof(p2) / sizeof(int));     // Calculates the number of elements in the resulting polynomial
-
-    for(int i = 0; i <  (sizeof(p1) / sizeof(int)); i++)    // First entry in the array can be multiplied by everything
-        output[i] = p1[0] * p2[i];
-    
-    memcpy(temp1, p2, size * sizeof(int));
-
-    for(int i = 1; i < size - 1; i++) {
-        fxMulX(temp1,temp1);
+    for(int i = 0; i < size; i++) {
+        output[i] = p1[0] * p2[0];
     }
 
-    memcpy(resultPolynomial, output, size * sizeof(int));     // Copy the output the the resultPolynomial input
-    delete[] output, temp1, temp2;
+    memcpy(tempArray, p2, size * sizeof(int));
+
+    for(int i = 1; i < size - 1; i++) {
+        fxMulX(tempArray, tempArray);
+
+        for(int j = 0; j < size; j++) {
+            scalarMultiplication(tempArray, p1[i], tempArray1);
+            output[j] = output[j] + tempArray1[j];
+        }
+    }
+
+    memcpy(resultPolynomial, output, size * sizeof(int));
+
+    delete[] output;
+    delete [] tempArray;
+	delete [] tempArray1;
 }
 
 void NTRUencrypt::fxDivX(int *p, int *resultPolynomial) {
