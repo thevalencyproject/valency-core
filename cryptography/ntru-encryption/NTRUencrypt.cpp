@@ -3,15 +3,15 @@
 
 // Polynomial Mathematic Functions
 int NTRUencrypt::polynomialDegree(int *p) {
-    for(int i = size - 1; i > -1; i--) {
-        if(p[i] != 0)
-            return i;
-
-        i--;
+    int i = size - 1;
+    while(i > -1) {
+        if(i > -1) {
+            if(p[i] != 0)
+                break;
+            i--;
+        }
     }
-
-    errorLog = "Invalid Polynomial Degree";
-    return 1;
+    return i;
 }
 
 int NTRUencrypt::modularInverse(int p, int m) {
@@ -20,24 +20,28 @@ int NTRUencrypt::modularInverse(int p, int m) {
     if(p < m)
         p = p + m;
 
-    int q, r, z;
-    int r1 = m;
-    int z1 = 0;
-    int z2 = 1;
+    int q, r, r1, r2, z, z1, z2;
+    r1 = m;
+    r2 = p;
+    z1 = 0;
+    z2 = 1;
 
-    for(int r2 = p; r2 > 0; r2 = r) {
+    while(r2 > 0) {
         q = r1 / r2;
-        r = r1 - q * r2;
-        r1 = r2;
-        z = z1 - 1 * z2;
-        z1 = z2;
-        z2 = z;
+		r = r1 - q * r2;
+		r1 = r2;
+		r2 = r;
+		z = z1 - q * z2;
+		z1 = z2;
+		z2 = z;
     }
 
     if(z1 < 0) {
-        z1 - m + z1;
+        z1 = m + z1;
+        return z1;
+    } else {
+        return z1;
     }
-    return z1;
 }
 
 void NTRUencrypt::modulusReduction(int *p, int mod, int *reducedPolynomial) {
@@ -49,17 +53,17 @@ void NTRUencrypt::modulusReduction(int *p, int mod, int *reducedPolynomial) {
 }
 
 void NTRUencrypt::polynomialSum(int *p1, int *p2, int *resultPolynomial) {
-    for(int i = 0; i < (sizeof(p1) / sizeof(int)); i++)
+    for(int i = 0; i < size; i++)
         resultPolynomial[i] = p1[i] + p2[i];
 }
 
 void NTRUencrypt::polynomialMultiplication(int *p1, int *p2, int *resultPolynomial) {
-    int *output = new int [size];
+    int *resPolynomial = new int [size];
     int *tempArray = new int [size];
     int *tempArray1 = new int [size];
 
     for(int i = 0; i < size; i++) {
-        output[i] = p1[0] * p2[0];
+        resPolynomial[i] = p1[0] * p2[i];
     }
 
     memcpy(tempArray, p2, size * sizeof(int));
@@ -69,13 +73,13 @@ void NTRUencrypt::polynomialMultiplication(int *p1, int *p2, int *resultPolynomi
 
         for(int j = 0; j < size; j++) {
             scalarMultiplication(tempArray, p1[i], tempArray1);
-            output[j] = output[j] + tempArray1[j];
+            resPolynomial[j] = resPolynomial[j] + tempArray1[j];
         }
     }
 
-    memcpy(resultPolynomial, output, size * sizeof(int));
+    memcpy(resultPolynomial, resPolynomial, size * sizeof(int));
 
-    delete[] output;
+    delete[] resPolynomial;
     delete [] tempArray;
 	delete [] tempArray1;
 }
@@ -91,7 +95,7 @@ void NTRUencrypt::fxDivX(int *p, int *resultPolynomial) {
         
         output[size - 1] = p[0];
     } else {
-        for(int i = 1; i < (size - 1); i++)
+        for(int i = 1; i < size - 1; i++)
             output[i - 1] = p[i];
         
         output[size - 2] = p[0];
@@ -126,22 +130,25 @@ void NTRUencrypt::scalarMultiplication(int *p, int s, int *resultPolynomial) {
 
 void NTRUencrypt::inversePolynomial(int *p, int mod, char modPower, int *resultPolynomial) {
     int k = 0;
-    int *output = new int [size];
-    memset(output, 0, size * sizeof(int));
+    int *invPol = new int [size];
     int *c = new int [size];
-    memset(c, 0, size * sizeof(int));
     int *f = new int [size];
-    memcpy(f, p, size * sizeof(int));
     int *g = new int [size];
-    memset(g, 0, size * sizeof(int));
     int *temp = new int [size];
 
-    output[0] = 1;
+    memset(invPol, 0, size * sizeof(int));
+    memset(c, 0, size * sizeof(int));
+    memset(g, 0, size * sizeof(int));
+    memcpy(f, p, size * sizeof(int));
+
+    invPol[0] = 1;
     g[0] = -1;
     g[size - 1] = 1;
 
-    //int count = 0;
-    for(int i = 0; i < (size * size); i++) {
+    k = 0;
+
+    int count = 0;
+    while(count < size * size) {
         while(f[0] == 0) {
             fxDivX(f, f);
             fxMulX(c, c);
@@ -149,61 +156,74 @@ void NTRUencrypt::inversePolynomial(int *p, int mod, char modPower, int *resultP
         }
 
         if(polynomialDegree(f) == 0) {
-            scalarMultiplication(output, modularInverse(f[0], mod), output);
-            modulusReduction(output, mod, output);
+            scalarMultiplication(invPol, modularInverse(f[0], mod), invPol);
+            modulusReduction(invPol, mod, invPol);
 
-            for(int j = 0; j < abs(size - k - 1); i++)
-                fxDivX(output, output);
-
-            //int q = mod;
-            for(int j = mod; j < pow((double) mod, (double) modPower); j = j * j) {
-                polynomialMultiplication(p, output, temp);
-                scalarMultiplication(temp, -1, temp);
-                temp[0] = temp[0] + 2;
-                polynomialMultiplication(output, temp, output);
-
-                modulusReduction(output, (int) pow((double) mod, (double) modPower), output);
+            for(int i = 0; i < abs(size - k - 1); i++) {
+                fxDivX(invPol, invPol);
             }
 
-            memcpy(resultPolynomial, output, size * sizeof(int));
-            delete[] output;
-            delete[] c;
-            delete[] f;
-            delete[] g;
-            delete[] temp;
+            int q = mod;
 
-            return;
+            while(q < pow((double) mod, (double) modPower)) {
+                q = q * q;
+                polynomialMultiplication(p, invPol, temp);
+                scalarMultiplication(temp, -1, temp);
+                temp[0] = temp[0] + 2;
+                polynomialMultiplication(invPol, temp, invPol);
+
+                modulusReduction(invPol, (int) pow((double) mod, (double) modPower), invPol);
+            }
+
+            memcpy(resultPolynomial, invPol, size * sizeof(int));
+
+            delete [] invPol;
+			delete [] c;
+			delete [] f;
+			delete [] g;
+			delete [] temp;
+
+			return;
         }
+        
+        if (polynomialDegree (f) < polynomialDegree (g)) {
+			int *f1 = f;
+			f = g;
+			g = f1;
+			int *b1 = invPol;
+			invPol = c;
+			c = b1;
+		}
 
-        if(polynomialDegree(f) < polynomialDegree(g)) {
-            int *f1 = f;
-            f = g;
-            g = f1;
-            int *b1 = output;
-            output = c;
-            c = b1;
-        }
+        int u;
+		u = f[0] * modularInverse (g[0], mod);
+		u = u % mod;
 
-        int u = (f[0] * modularInverse(g[0], mod)) % mod;
-        if(u < 0)
-            u = mod + u;
-
+		if (u < 0)
+			u = mod + u;
+        
         for(int i = 0; i < size; i++) {
             f[i] = (f[i] - u * g[i]);
 			f[i] = f[i] % mod;
 			if(f[i] < 0)
 				f[i] = mod + f[i];
 
-			output[i] = (output[i] - u * c[i]);
-			output[i] = output[i] % mod;
-			if(output[i] < 0)
-				output[i] = mod + output[i];
+			invPol[i] = (invPol[i] - u * c[i]);
+			invPol[i] = invPol[i] % mod;
+			if(invPol[i] < 0)
+				invPol[i] = mod + invPol[i];
         }
+        count++;
     }
 
     errorLog = "Polynomial is irreversible";
-    delete[] output, c, f, g, temp;
-    return;
+
+    delete [] invPol;
+	delete [] c;
+	delete [] f;
+	delete [] g;
+	delete [] temp;
+	return;
 }
 
 
@@ -272,7 +292,7 @@ void NTRUencrypt::publicKeyGenerator(int *fPolynomial, int *gPolynomial, int *re
     polynomialMultiplication(output, gPolynomial, output);
 
     if(qDeg < 1)
-        errorLog = "Wrong input of exponent of modulus q: default value of 1 was used";
+        errorLog = "Wrong input of exponent of modulus q";
     if(qDeg >= 1)
         modulusReduction(output, (int) pow((double) modQ, (double) qDeg), output);
     
@@ -284,7 +304,7 @@ void NTRUencrypt::publicKeyGenerator(int *fPolynomial, int *gPolynomial, int *re
 void NTRUencrypt::encryption(int *mPolynomial, int *hPolynomial, int *resultPolynomial) {
     int *output = new int [size];
     int *rPolynomial = new int [size];
-    gPolynomialGenerator(dg, rPolynomial);  // Generate the r polynomial
+    gPolynomialGenerator(dr, rPolynomial);  // Generate the r polynomial
 
     for(int i = 0; i < size; i++) {
         mPolynomial[i] = mPolynomial[i] % modP;
@@ -304,58 +324,62 @@ void NTRUencrypt::encryption(int *mPolynomial, int *hPolynomial, int *resultPoly
 }
 
 void NTRUencrypt::decryption (int *cipherPolynomial, int *fPolynomial, int *fpPolynomial, int *resultPolynomial) {
-    int *output = new int [size];
     int *temp = new int [size];
+    int *secretPolynomial = new int [size];
     int qPower = (int) pow ((double) modQ, (double) qDeg);
 
     polynomialMultiplication(cipherPolynomial, fPolynomial, temp);
-    for(int i = 0; i < size; i++) {
-        temp[i] = temp[i] % qPower;
-        if(temp[i] <= (qPower / -2))
-            temp[i] = temp[i] + qPower;
-        if(temp[i] > (qPower / 2))
-            temp[i] = temp[i] - qPower;
-
-        output[i] = temp[i] % modP;
+    for(int k = 0; k < size; k++) {
+        temp[k] = temp[k] % qPower;
+        if (temp[k] <= (qPower / -2))
+			temp[k] = temp[k] + qPower;
+		if (temp[k] > (qPower / 2))
+			temp[k] = temp[k] - qPower;
     }
 
-    polynomialMultiplication(output, fpPolynomial, output);
-    for(int i = 0; i < size; i++) {
-        temp[i] = temp[i] % modP;
-        if(temp[i] <= (modP / -2))
-            temp[i] = temp[i] + modP;
-        if(temp[i] > (modP / 2))
-            temp[i] = temp[i] - modP;
+    for (int k = 0; k < size; k++)
+		secretPolynomial[k] = temp[k] % modP;
+
+    polynomialMultiplication(secretPolynomial, fpPolynomial, secretPolynomial);
+    for(int k = 0; k < size; k++) {
+        secretPolynomial[k] = secretPolynomial [k] % modP;
+		if (secretPolynomial[k] <= (modP / -2))
+			secretPolynomial[k] = secretPolynomial[k] + modP;
+		if (secretPolynomial[k] > (modP / 2))
+			secretPolynomial[k] = secretPolynomial[k] - modP;
     }
 
-    memcpy(resultPolynomial, output, size * sizeof(int));
-    delete[] output;
+    memcpy(resultPolynomial, secretPolynomial, size * sizeof(int));
+
     delete[] temp;
+    delete[] secretPolynomial;
 }
 
 
 // Conversion Functions
 void NTRUencrypt::charToArray(char c, int *array) {
-    unsigned int x = 1;
-    char16_t y = c;
-
-    for(int i = 0; i < 16; i++) {
-        array[i] = (x & y) >> i;
-        x = x << 1;
-    }
+    unsigned int i = 1;
+	char16_t b = c;
+	
+	for (int k = 0; k < 16; k++) {
+		array[k] = (i & b) >> k;
+		i = i << 1;
+	}
 }
 
 char NTRUencrypt::arrayToChar(int *array) {
-    unsigned int x = 1;
-    char16_t y = 0;
+    unsigned int i = 1;
+	char a = 0;
+	char16_t b = 0;
+	
+	for (int k = 0; k < 16; k++) {
+		array[k] = array[k] << k;
+		b = b | (array[k] & i);
+		i = i << 1;		
+	}
+	a = (char)(b);
 
-    for(int i = 1; i < 16; i++) {
-        array[i] = array[i] << i;
-        y = y | (array[i] & x);
-        x = x << 1;
-    }
-
-    return (char)(y);
+	return a;
 }
 
 void NTRUencrypt::stringToArray(std::string message, int *array) {
@@ -363,8 +387,8 @@ void NTRUencrypt::stringToArray(std::string message, int *array) {
 
     for(int i = 0; i < message.length(); i++) {
         charToArray(message[i], temp);
-        for(int k = 0; k < 16; k++)
-            array[k + i * 16] = temp[k];
+        for(int j = 0; j < 16; j++)
+            array[j + i * 16] = temp[j];
     }
 }
 
@@ -376,7 +400,7 @@ std::string NTRUencrypt::arrayToString(int *array, int size) {
 
     for(int i = 0; i < arraySize; i++) {
         for(int j = 0; j < 16; j++)
-            a[j] = array[(j + i) * 16];
+            a[j] = array[j + i * 16];
         
         s[i] = arrayToChar(a);
     }
