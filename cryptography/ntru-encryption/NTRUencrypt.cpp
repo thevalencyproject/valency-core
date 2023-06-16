@@ -462,7 +462,7 @@ std::string NTRUencrypt::generatePrivateKey(int seed) {
 }
 
 std::string NTRUencrypt::generatePublicKey(std::string privateKey) {
-    privateKey = "." + privateKey;  // Add '.' to the start of the private key (to aid with iteration)
+    privateKey = '.' + privateKey + '.';  // Add '.' to the start of the private key (to aid with iteration)
 
     std::vector<int> indexPosition;
     for(int i = 0; i < privateKey.size(); i++) {
