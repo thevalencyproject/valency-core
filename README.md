@@ -80,7 +80,7 @@ Source: Cherckesova, L. et al. (2020) ‘Post-quantum cryptosystem NTRUEnCrypt a
 
 **Setup**
 1. Include NTRUencrypt.h: ```#include "NTRUencrypt.h"```
-2. Create a NTRUencrypt Object with your desired parameters (see table):<br>
+2. Create a NTRUencrypt Object with your desired parameters (see table - p parameters >2 are currently not supported):<br>
 ```NTRUencrypt ntru = NTRUencrypt(4)```
 <br>
 
@@ -92,12 +92,16 @@ Source: Cherckesova, L. et al. (2020) ‘Post-quantum cryptosystem NTRUEnCrypt a
 <br>
 
 **Encryption** <br>
-Instructions coming once implementation is complete (~1 to 2 days)
+1. Get the input data as a string: ```std::string data = "Hello World!";```
+2. Get the public key of the entity you want to encrypt for: ```std::string publicKey = "some_key";```
+3. Generate the cipher using the encrypt function: ```std::string cipher = ntru.encrypt(publicKey, data);```
+4. Send the cipher to the recipient (this could be done using the valency-core networking framework).
 <br>
 
 **Decryption** <br>
-Instructions coming once implementation is complete (~1 to 2 days)
-
+1. Get the cipher generated with your public key: ```std::string cipher = "some_data";```
+2. Get your private key (generated with ntru.generatePrivateKey(seed)): ```std::string privateKey = "some_key";```
+3. Decrypt the cipher using the decrypt function: ```std::string output = ntru.decrypt(privateKey, cipher);```
 <br>
 
 ## Random Algorithm
