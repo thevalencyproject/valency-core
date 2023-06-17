@@ -6,19 +6,18 @@
 #include <vector>
 #include <cstring>
 #include <sstream>
-#include <iostream>
 
 
 class NTRUencrypt {
 private:
     // Configuration - These parameters can be found online to deduce the security margin (128, 192, 256bit) <- this will be dynamically allocated from the constructor in future updates!!!
-    int N, size;     // N and size are the same parameters
-    int modP;
-    int modQ;
-    int df;          // F Polynomial Generation
-    int dg;          // G Polynomial Generation
-    int dr;          // R Polynomial Generation
-    char qDeg = 1;
+    int size;        // N parameter
+    int modP;        // p Parameter
+    int modQ;        // q Parameter
+    int df;          // fPolynomial Generation
+    int dg;          // gPolynomial Generation
+    int dr;          // rPolynomial Generation
+    char qDeg;
 
     // Polynomial Mathematical Functions
     int polynomialDegree(int *p);                                                     // Degree of the input polynomial 'p'
