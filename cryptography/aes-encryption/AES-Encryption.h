@@ -132,6 +132,8 @@ public:
     // Encrypts or Decrypts the inputted data using the inputted keys
     std::vector<unsigned char> encrypt(std::vector<unsigned char> k, std::vector<unsigned char> d);
     std::vector<unsigned char> decrypt(std::vector<unsigned char> k, std::vector<unsigned char> d);
+    std::string encrypt(std::string k, std::string d);
+    std::string decrypt(std::string k, std::string d);
 };
 
 #endif
