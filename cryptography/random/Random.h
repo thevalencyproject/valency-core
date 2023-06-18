@@ -12,7 +12,7 @@ public:
     Random() {}
 
     // Random Number Generator Function - generates a random number between the inputted minimum and maximum
-    int getRandomNumber(int* minimum, int* maximum, int* seed);
+    size_t getRandomNumber(size_t* minimum, size_t* maximum, size_t* seed);
 };
 
 #endif

@@ -1,11 +1,11 @@
 #include "Random.h"
 
 
-int Random::getRandomNumber(int* minimum, int* maximum, int* seed) {
+size_t Random::getRandomNumber(size_t* minimum, size_t* maximum, size_t* seed) {
     // Add refresh onto the seed to ensure randomness
     std::mt19937 Random(*seed + refresh);
-    std::uniform_int_distribution<int> gen(*minimum, *maximum);
-
+    std::uniform_real_distribution<size_t> gen(*minimum, *maximum);
+    
     refresh++;
     return gen(Random);
 }
