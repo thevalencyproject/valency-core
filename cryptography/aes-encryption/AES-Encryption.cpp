@@ -159,6 +159,34 @@ std::vector<unsigned char> AESEncryption::encrypt(std::vector<unsigned char> k, 
     return output;
 }
 
+std::string AESEncryption::encrypt(std::string k, std::string d) {
+    std::vector<unsigned char> key;
+    for(int i = 0; i < k.size(); i++)
+        key.push_back(k[i]);
+    
+    std::vector<unsigned char> data;
+    for(int i = 0; i < d.size(); i++)
+        data.push_back(d[i]);
+    
+    std::vector<unsigned char> vect = encrypt(key, data);
+    std::string output(vect.begin(), vect.end());
+    return output;
+}
+
 std::vector<unsigned char> AESEncryption::decrypt(std::vector<unsigned char> k, std::vector<unsigned char> d) {
 
+}
+
+std::string AESEncryption::decrypt(std::string k, std::string d) {
+    std::vector<unsigned char> key;
+    for(int i = 0; i < k.size(); i++)
+        key.push_back(k[i]);
+    
+    std::vector<unsigned char> data;
+    for(int i = 0; i < d.size(); i++)
+        data.push_back(d[i]);
+    
+    std::vector<unsigned char> vect = decrypt(key, data);
+    std::string output(vect.begin(), vect.end());
+    return output;
 }
