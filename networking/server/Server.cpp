@@ -2,8 +2,9 @@
 
 
 // Modify this function to achieve your desired outcomes!
-bool Server::handleConnection(int clientSocket) {
+bool Server::handleConnection(int clientSocket, std::string (*communicate)(std::string)) {
     int bytesRecv;
+    std::string message;
 
     while(1) {
         memset(buffer, 0, 4096);    // Clear the buffer
@@ -19,9 +20,12 @@ bool Server::handleConnection(int clientSocket) {
             return 1;
         }
 
-        // Do something with the message - this line uses iostream - remove it from the header if not in use
-        std::cout << "Received: " << std::string(buffer, 0, bytesRecv) << std::endl;
-        send(clientSocket, buffer, bytesRecv + 1, 0);   // Resend the message back to the client
+        // Do something with the message - whatever the communicate() function returns, is what is sent back to the client
+        message = communicate(std::string(buffer, 0, bytesRecv));
+        if(send(clientSocket, message.c_str(), message.size() + 1, 0) == -1) {    // Resend the message back to the client
+            errorLog = "Error sending data to the client";
+            return 1;
+        }
     }
 
     return 0;
@@ -71,7 +75,7 @@ bool Server::acceptConnection() {
     clientSockets.push_back(clientSocket);      // Add the clientSocket to the client vector
 }
 
-bool Server::run(int* port) {
+bool Server::run(int* port, std::string (*communicate)(std::string)) {
     if(createSocket(port) == 1)     // Create a listening socket
         return 1;
     
@@ -93,7 +97,7 @@ bool Server::run(int* port) {
                 if(FD_ISSET(i, &readySockets)) {
                     acceptConnection();
                 } else {
-                    handleConnection(clientSockets[i]);
+                    handleConnection(clientSockets[i], communicate);    // Handle the connection with the function that is passed through
                 }
             }
         }
