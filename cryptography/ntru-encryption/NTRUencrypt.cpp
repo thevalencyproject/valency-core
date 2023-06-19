@@ -452,16 +452,22 @@ std::string NTRUencrypt::generatePublicKey(std::string privateKey) {
 
     // gPolynomial
     int *gPolynomial = new int [size];
-    for(int i = size + 1; i < (size * 2); i++)
-        gPolynomial[i - size] = stoi(privateKey.substr(indexPosition[i] + 1, indexPosition[i + 1] - indexPosition[i] - 1));
+    for(int i = 0; i < size; i++)
+        gPolynomial[i] = stoi(privateKey.substr(indexPosition[i] + 1, indexPosition[i + 1] - indexPosition[i] - 1));
 
     int *result = new int [size];
     publicKeyGenerator(fPolynomial, gPolynomial, result);
 
     // Convert result into a string:
-    std::string output;
+    std::string output, hex;
+    for(int i = 0; i < size; i++) {
+        decimalToHex(&result[i], &hex);
+        output = output + '.' + hex;
+    }
+    /* Without converting to hexadecimal
     for(int i = 0; i < size; i++)
         output = output + '.' + std::to_string(result[i]);
+    */
 
     output.erase(0, 1);     // Remove the '.' at the start of the key
 
@@ -480,8 +486,16 @@ std::string NTRUencrypt::encrypt(std::string receiverKey, std::string data) {
             indexPosition.push_back(i);
 
     int *receiverPolynomial = new int [size];
+    int decimal;
+    for(int i = 0; i < size; i++) {
+        hexToDecimal(&receiverKey.substr(indexPosition[i] + 1, indexPosition[i + 1] - indexPosition[i] - 1), &decimal);
+        receiverPolynomial[i] = decimal;
+    }
+    /* Without converting to hexadecimal
     for(int i = 0; i < size; i++)
         receiverPolynomial[i] = stoi(receiverKey.substr(indexPosition[i] + 1, indexPosition[i + 1] - indexPosition[i] - 1));
+    */
+
 
     // Get the data and encrypt, then copy to output string
     std::string output;
