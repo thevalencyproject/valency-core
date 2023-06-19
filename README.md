@@ -10,7 +10,7 @@ Each module in this repository is designed to be modular for reuse in other cool
 7. File Reader and Writer
 8. Quicksort
 9. SHA-256 Hashing Algorithm
-10. LZMA Compression Algorithm
+std::string encrypt(std::string k, std::string d);10. LZMA Compression Algorithm
 11. Traceable Ring Signatures
 12. GUI Framework
 <br>
@@ -49,10 +49,10 @@ The AES-Encryption algorithm is used to encrypt and decrypt data using a single 
 **Encryption**
 1. Include AES-Encryption.h: ```#include "AES-Encryption.h"```
 2. Create an AESEncryption Object with either 128bit, 192bit, or 256bit: ```AESEncryption aes = AESEncryption(128)```
-3. Get a data and a key - these are taken in as a vector of unsigned char's (ensure the key is the correct keylength (128bit=16, 192bit=24, 256bit=32)): ```std::vector<unsigned char> key; std::vector<unsigned char> data;```
-4. Call the encrypt function somewhere - this will return a vector of unsigned char's as output: <br>
-```std::string output = std::to_string(aes.encrypt(key, data));``` <br>
-**Note**: Please ensure that you save the input data length, as this makes the data decryptable.
+3. Get a data and a key - these are taken in as a string, or as a vector of unsigned char's (ensure the key is the correct keylength (128bit=16, 192bit=24, 256bit=32)): ```std::vector<unsigned char> key; std::vector<unsigned char> data;```
+4. Call the encrypt function somewhere - this will return a either a string or a vector of unsigned char's as output: <br>
+```std::string output = aes.encrypt(key, data);``` <br>
+**Note**: Please ensure that you save the input data length as a header somewhere, as this makes the data decryptable.
 
 <br>
 
@@ -85,6 +85,7 @@ Source: Cherckesova, L. et al. (2020) ‘Post-quantum cryptosystem NTRUEnCrypt a
 <br>
 
 **Key Generation** <br>
+The keysize is dependant on the strength chosen in the constructor. The private key consists of both the f and g polynomials - making it double the size of the public key.
 1. Get a random seed - this could be from concatenating a login, or through the use of some random() function: <br>
 ```int seed = random("LOGIN" + "PASSWORD");```
 2. Generate a private key using the random seed: ```std::string private = ntru.generatePrivateKey(seed);```
