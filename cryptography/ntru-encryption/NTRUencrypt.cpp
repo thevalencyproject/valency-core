@@ -452,8 +452,8 @@ std::string NTRUencrypt::generatePublicKey(std::string privateKey) {
 
     // gPolynomial
     int *gPolynomial = new int [size];
-    for(int i = 0; i < size; i++)
-        gPolynomial[i] = stoi(privateKey.substr(indexPosition[i] + 1, indexPosition[i + 1] - indexPosition[i] - 1));
+    for(int i = size + 1; i < (size * 2); i++)
+        gPolynomial[i - size] = stoi(privateKey.substr(indexPosition[i] + 1, indexPosition[i + 1] - indexPosition[i] - 1));
 
     int *result = new int [size];
     publicKeyGenerator(fPolynomial, gPolynomial, result);
