@@ -2,32 +2,34 @@
 
 
 // Modify this function to achieve your desired outcomes!
-bool Client::communicate() {
-    std::string message = "https://youtu.be/xm3YgoEiEDc";   // Test message ;)
+bool Client::handleConnection(std::string (*communicate)(std::string)) {
+    int counter = 0;
+    std::string message = "https://youtu.be/xm3YgoEiEDc";   // First message to be sent
 
     while(1) {
         // Send something to the server
-        if(send(commSocket, message.c_str(), message.size() + 1, 0) == -1) {
-            errorLog = "Error sending data to the server";
-            return 1;
+        if(counter == 0) {      // Send the first message to the server to start communications
+            if(send(commSocket, message.c_str(), message.size() + 1, 0) == -1) {
+                errorLog = "Error sending data to the server";
+                return 1;
+            }
+
+            counter++;
+        } else {
+            if(send(commSocket, message.c_str(), message.size() + 1, 0) == -1) {
+                errorLog = "Error sending data to the server";
+                return 1;
+            }
         }
 
         // Clear the buffer and wait for a response
         memset(buffer, 0, 4096);
         receivedBytes = recv(commSocket, buffer, 4096, 0);
         
-        // Display the received data - this line uses iostream - remove it from the header if not in use
-        std::cout << "[RECEIVED FROM SERVER]: " << std::string(buffer, receivedBytes) << std::endl;
-
-        // Change the message and repeat - this example implementation changes message based on server response
-        if(std::string(buffer, receivedBytes) == "TEST RESPONSE") {
-            message = "TEST MESSAGE";
-        } else {
-            message = "/quit";
-        }
-
-        // Stop communicating if the message is '/quit'
-        if(message == "/quit")
+        // Use the input function to determine what the reply
+        message = communicate(std::string(buffer, receivedBytes));
+        
+        if(message == "/quit")  // Stop communicating if the message is '/quit'
             break;
     }
 
@@ -44,11 +46,11 @@ Client::~Client() {
     disconnect();
 }
 
-bool Client::connectToServer(std::string* ip, int* port) {
+bool Client::connectToServer(std::string* ip, int* port, std::string (*communicate)(std::string)) {
     if(createSocket(*ip, port) == 1 || initialiseConnection() == 1)
         return 1;
     
-    return communicate();
+    return handleConnection(communicate);
 }
 
 bool Client::createSocket(std::string ip, int* port) {

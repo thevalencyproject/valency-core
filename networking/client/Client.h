@@ -24,7 +24,7 @@ private:
     bool createSocket(std::string ip, int* port);
     bool initialiseConnection();
 
-    bool communicate();     // Modify this function to achieve your desired outcomes!
+    bool handleConnection(std::string (*communicate)(std::string));
 
 public:
     Client();
@@ -32,7 +32,7 @@ public:
 
     std::string errorLog;   // If anything fails, this will automatically be set to the relevant error message
 
-    bool connectToServer(std::string* ip, int* port);
+    bool connectToServer(std::string* ip, int* port, std::string (*communicate)(std::string));
     void disconnect();
 };
 
