@@ -75,7 +75,8 @@ bool Server::acceptConnection() {
     clientSockets.push_back(clientSocket);      // Add the clientSocket to the client vector
 }
 
-bool Server::run(int* port, std::string (*communicate)(std::string)) {
+template<typename T>
+bool Server::run(int* port, std::string (T::*communicate)(std::string)) {
     if(createSocket(port) == 1)     // Create a listening socket
         return 1;
     

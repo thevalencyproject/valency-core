@@ -32,7 +32,8 @@ public:
 
     std::string errorLog;   // If anything fails, this will automatically be set to the relevant error message
 
-    bool connectToServer(std::string* ip, int* port, std::string (*communicate)(std::string));
+    template<typename T>
+    bool connectToServer(std::string* ip, int* port, std::string (T::*communicate)(std::string));
     void disconnect();
 };
 

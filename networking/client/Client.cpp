@@ -46,7 +46,8 @@ Client::~Client() {
     disconnect();
 }
 
-bool Client::connectToServer(std::string* ip, int* port, std::string (*communicate)(std::string)) {
+template<typename T>
+bool Client::connectToServer(std::string* ip, int* port, std::string (T::*communicate)(std::string)) {
     if(createSocket(*ip, port) == 1 || initialiseConnection() == 1)
         return 1;
     
