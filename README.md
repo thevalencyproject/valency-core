@@ -19,22 +19,40 @@ std::string encrypt(std::string k, std::string d);10. LZMA Compression Algorithm
 The networking framework is based on a client-server relationship, and requires custom configuration of some handling functions to achieve your desired functionality. <br>
 There will be an update in the near future introducing multi-threaded networking, however for now it is only single-threaded.<br><br>
 **Client**
-1. Configure the communicate() function in Client.cpp to achieve your desired outcomes (See example implementation for help creating your own implementation)
-2. Include Client.h: ```#include "Client.h"```
-3. Create a Client Object: ```Client c;```
-4. Get the Server IP Address and Port: ```std::string ip = "192.168.1.1"; int port = 8088;```
-5. Connect to the server - this will automatically communicate using the communicate() function we configured earlier: <br>
-```c.connectToServer(&ip, &port);```
+1. Create a communicate() function wherever you are implementing client networking - This is the function that gets run everytime there is a message from the server, it takes in a string (server message), and returns a string (what you want to send back to the server) - if ```/quit``` is returned, the client will disconnect. <br>
+```
+std::string communicate(std::string serverMessage) {
+  if(serverMessage == "Some Data") {
+    return "Some Reply";
+  } else {
+    return "/quit";
+  }
+}
+```
+3. Include Client.h: ```#include "Client.h"```
+4. Create a Client Object: ```Client c;```
+5. Get the Server IP Address, Port, and communicate() function pointer: <br>```std::string ip = "192.168.1.1"; int port = 8088; std::string (*comm)(std::string) = communicate;```
+6. Connect to the server - this will automatically communicate using the communicate() function we configured earlier: <br>
+```c.connectToServer(&ip, &port, comm);```
 
 <br>
 
 **Server**
-1. Configure the handleConnection() function in Server.cpp to achieve your desired outcomes (See example implementation for help creating your own implementation)
-2. Include Server.h: ```#include "Server.h"```
-3. Create a Server Object: ```Server s;```
-4. Get the port: ```int port = 8088;```
-5. Run the server - this will automatically handle connections using the handleConnection() function we configured earlier: <br>
-```s.run(&port);```
+1. Create a communicate() function wherever you are implementing client networking - This is the function that gets run everytime there is a message from the client, it takes in a string (client message), and returns a string (what you want to send back to the client). <br>
+```
+std::string communicate(std::string clientMessage) {
+  if(clientMessage == "Some Data") {
+    return "Some Reply";
+  } else {
+    return "Another Reply";
+  }
+}
+```
+3. Include Server.h: ```#include "Server.h"```
+4. Create a Server Object: ```Server s;```
+5. Get the Port and communicate() function pointer: <br>```int port = 8088; std::string (*comm)(std::string) = communicate;```
+6. Run the server - this will automatically communicate with clients using the communicate() function we configured earlier: <br>
+```s.run(&port, comm);```
 
 <br>
 
