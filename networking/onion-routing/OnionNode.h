@@ -17,11 +17,10 @@ private:
     std::string pubKey;
     std::string privKey;
 
-    Client c;
-    Server s;
+    Client client;
+    Server server;
 
-    std::vector<std::string> clientIdentifier;
-    std::string communicate(std::string data);
+    std::string communicate(std::string);
 
 public:
     OnionNode(int p);
