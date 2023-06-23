@@ -54,6 +54,11 @@ void AESEncryption::subBytes() {
         state[i] = rijndaelSBox[state[i]];
 }
 
+void AESEncryption::inverseSubBytes() {
+    for(int i = 0; i < 16; i++)
+        state[i] = invRijndaelSBox[state[i]];
+}
+
 void AESEncryption::shiftRows() {
     unsigned char tempState[16];    // Initialise a temporary state array to do the shifting in
 
@@ -216,13 +221,13 @@ std::vector<unsigned char> AESEncryption::decrypt(std::vector<unsigned char> k, 
         // Final Round
         addRoundKey();
         unShiftRows();
-        subBytes();
+        inverseSubBytes();
 
         for(int j = 0; j < rounds; j++) {   // Main Rounds
             addRoundKey();
             mixColumns();
             unShiftRows();
-            subBytes();
+            inverseSubBytes();
         }
 
         addRoundKey();  // Initial Round
