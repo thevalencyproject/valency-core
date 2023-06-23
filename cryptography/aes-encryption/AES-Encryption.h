@@ -45,14 +45,14 @@ private:
     unsigned char state[16];        // This holds the 16 byte blocks that get individually encrypted, these are then pushed back into the output
     unsigned char roundKey[16];     // This holds the key that gets modified each round
 
-    // Core Encryption Functions
+    // Core Functions - Both encryption and decryption use most of these interchangeably
     void keyExpansion();
     void addRoundKey();
     void subBytes();
     void shiftRows();
+    void unShiftRows();     // Used for decrytpion
     void mixColumns();
 
-    
     // Lookup Tables - Used for matrix multiplication
     const int multiplyBy2[256] = {0x00,0x02,0x04,0x06,0x08,0x0a,0x0c,0x0e,0x10,0x12,0x14,0x16,0x18,0x1a,0x1c,0x1e,
                                   0x20,0x22,0x24,0x26,0x28,0x2a,0x2c,0x2e,0x30,0x32,0x34,0x36,0x38,0x3a,0x3c,0x3e,

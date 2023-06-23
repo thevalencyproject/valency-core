@@ -81,6 +81,32 @@ void AESEncryption::shiftRows() {
     memcpy(state, tempState, sizeof(state));
 }
 
+void AESEncryption::unShiftRows() {     // The opposite of shiftRows ;)
+    unsigned char tempState[16];
+    
+    tempState[0] = state[0];
+    tempState[5] = state[1];        
+    tempState[10] = state[2];       
+    tempState[15] = state[3];       
+    tempState[4] = state[4];
+    
+    tempState[9] = state[5];        
+    tempState[14] = state[6];       
+    tempState[3] = state[7];        
+    tempState[8] = state[8];
+    
+    tempState[13] = state[9];       
+    tempState[2] = state[10];       
+    tempState[7] = state[11];       
+    tempState[12] = state[12];
+    
+    tempState[1] = state[13];       
+    tempState[6] = state[14];       
+    tempState[11] = state[15];      
+
+    memcpy(state, tempState, sizeof(state));
+}
+
 void AESEncryption::mixColumns() {
     unsigned char tempState[16];    // Initialise a temporary state array to do the mixing in
 
