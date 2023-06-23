@@ -3,20 +3,13 @@
 
 #include <string>
 #include <vector>
+#include "Position.h"
 
-
-struct DictionaryEntry {
-    std::string word;
-    int code;
-
-    DictionaryEntry() {};
-    DictionaryEntry(std::string w, int c) { word = w; code = c; };
-};
 
 class LZMACompression {
 private:
-    std::vector<DictionaryEntry> dictionary;
-
+    std::vector<Position2D> dictionary;
+    
 public:
     LZMACompression();
 
