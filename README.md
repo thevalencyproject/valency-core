@@ -59,8 +59,7 @@ std::string communicate(std::string clientMessage) {
 ## Onion Routing
 
 ## AES Symmetric Encryption
-The AES-Encryption algorithm is used to encrypt and decrypt data using a single key. This framework allows for use of 128bit, 192bit, or 256bit AES-Encryption. <br>
-**Note:** This implementation of AES is in VERY early stages of development, and I would not advise ANYBODY to use this for purposes where security and efficiency is required.
+The AES-Encryption algorithm is used to encrypt and decrypt data using a single key. This framework allows for use of 128bit, 192bit, or 256bit AES-Encryption. The public functions allow for the input and output of either char vector's or strings (char vector step-by-step shown for encryption, and string step-by-step shown for decryption).<br>
 
 <br>
 
@@ -69,13 +68,17 @@ The AES-Encryption algorithm is used to encrypt and decrypt data using a single 
 2. Create an AESEncryption Object with either 128bit, 192bit, or 256bit: ```AESEncryption aes = AESEncryption(128)```
 3. Get a data and a key - these are taken in as a string, or as a vector of unsigned char's (ensure the key is the correct keylength (128bit=16, 192bit=24, 256bit=32)): ```std::vector<unsigned char> key; std::vector<unsigned char> data;```
 4. Call the encrypt function somewhere - this will return a either a string or a vector of unsigned char's as output: <br>
-```std::string output = aes.encrypt(key, data);``` <br>
-**Note**: Please ensure that you save the input data length as a header somewhere, as this makes the data decryptable.
+```std::vector<unsigned char> output = aes.encrypt(key, data);``` <br>
+**Note**: The encryption function automatically saves the # of repeats that must be applied (this makes the cipher decryptable for any size).
 
 <br>
 
 **Decryption**<br>
-Decryption is currently not supported - an implementation will be coming within the next week of this commit :)
+1. Include AES-Encryption.h: ```#include "AES-Encryption.h"```
+2. Create an AESEncryption Object with either 128bit, 192bit, or 256bit: ```AESEncryption aes = AESEncryption(128)```
+3. Get a cipher and its related key - these are taken in as a string, or as a vector of unsigned char's (ensure the key is the correct keylength (128bit=16, 192bit=24, 256bit=32)): ```std::string key; std::string data;```
+4. Call the decrypt function somewhere - this will return a either a string or a vector of unsigned char's as output: <br>
+```std::string output = aes.decrypt(key, data);``` <br>
 
 <br>
 
