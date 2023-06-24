@@ -183,6 +183,12 @@ std::vector<unsigned char> AESEncryption::encrypt(std::vector<unsigned char> k, 
         completedBytes = completedBytes + 16;
     }
 
+    // Append the number of repeats that must be done to decrypt the cipher
+    output.insert(output.begin(), '.');
+    std::string outputHeader = std::to_string(repeat);
+    for(int i = outputHeader.size(); i > 0; i++)
+        output.insert(output.begin(), outputHeader[i]);
+
     // Clear sensitive data and return the output
     data.clear();
     key.clear();
@@ -210,11 +216,20 @@ std::vector<unsigned char> AESEncryption::decrypt(std::vector<unsigned char> k, 
     key = k;
     data = d;
 
-    int repeat = data.size() / 16;
+    // Read the header (number of repeats) - stored from the start of the vector to the first '.' char
+    int repeat;
+    for(int i = 0; i < data.size(); i++) {
+        if(data[i] == '.') {
+            std::string repeatTemp(data.begin(), data.begin() + (i - 1));
+            repeat = stoi(repeatTemp);
+            data.erase(data.begin(), data.begin() + i);
+        }
+    }
+
+    keyExpansion();     // Expand the keys
+
+    // Decrypt the data
     int completedBytes = 0;
-
-    keyExpansion();
-
     for(int i = 0; i < repeat; i++) {
         for(int j = 0; j < 16; j++) { state[i] = data[completedBytes + j]; }    // Set state to next 16 bytes
 
