@@ -185,9 +185,17 @@ std::vector<char> LZMACompression::decompress(std::vector<char> &compressedData)
 }
 
 std::string LZMACompression::compress(std::string &inputData) {
-    
+    std::vector<char> data(inputData.begin(), inputData.end());
+    data = compress(data);
+
+    std::string output(data.begin(), data.end());
+    return output;
 }
 
 std::string LZMACompression::decompress(std::string &compressedData) {
-    
+    std::vector<char> data(compressedData.begin(), compressedData.end());
+    data = decompress(data);
+
+    std::string output(data.begin(), data.end());
+    return output;
 }
