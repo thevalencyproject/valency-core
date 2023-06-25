@@ -1,18 +1,18 @@
 #include "LZMA-Compression.h"
 
 
-void LZMACompression::initialiseDictionary(size_t size) {
+void LZMACompression::initialiseDictionary(unsigned int size) {
     dictionarySize = size;
     dictionary.clear();
     dictionary.resize(size, 0);
 }
 
-std::pair<int, int> LZMACompression::findMatch(std::vector<char> sequence, size_t position) {
-    int matchingDistance = 0;
-    int matchingLength = 0;
+std::pair<unsigned int, unsigned int> LZMACompression::findMatch(std::vector<char> sequence, unsigned int position) {
+    unsigned int matchingDistance = 0;
+    unsigned int matchingLength = 0;
 
-    for(size_t i = 0; i < dictionary.size(); i++) {
-        size_t length = 0;
+    for(unsigned int i = 0; i < dictionary.size(); i++) {
+        unsigned int length = 0;
 
         while(position + length < sequence.size() && i + length < dictionary.size() && sequence[position + length] == dictionary[i + length])
             length++;
@@ -43,11 +43,11 @@ std::vector<char> LZMACompression::processUnmatchedBytes(std::vector<char> unmat
     return output;
 }
 
-std::pair<int, int> LZMACompression::encodeLength(int length) {
+std::pair<unsigned int, unsigned int> LZMACompression::encodeLength(unsigned int length) {
     return std::make_pair(length / 2, length % 2);  // Simple length encoding for now
 }
 
-int LZMACompression::decodeLength(std::pair<int, int> encodedLength) {
+unsigned int LZMACompression::decodeLength(std::pair<unsigned int, unsigned int> encodedLength) {
     return encodedLength.first / 2;
 }
 
@@ -102,7 +102,7 @@ std::vector<char> LZMACompression::rangeDecode(std::vector<char> encodedDataStre
     std::map<char, float> probabilities = calculateSymbolProbabilities(encodedDataStream);
 
     // Decode each symbol in the encodedDataStream
-    for(size_t i = 0; i < encodedDataStream.size(); i++) {
+    for(unsigned int i = 0; i < encodedDataStream.size(); i++) {
         unsigned int scale = range;     // Calculate the total scale of the probabilities
 
         // Determine which range the code falls into:
@@ -136,8 +136,8 @@ std::vector<char> LZMACompression::rangeDecode(std::vector<char> encodedDataStre
 std::vector<char> LZMACompression::compress(std::vector<char> &inputData) {
     std::vector<char> output;
 
-    for(size_t i = 0; i < inputData.size();) {
-        std::pair<size_t, size_t> match = findMatch(inputData, i);   // Find the longest match in the dictionary - distance, length
+    for(unsigned int i = 0; i < inputData.size();) {
+        std::pair<unsigned int, unsigned int> match = findMatch(inputData, i);   // Find the longest match in the dictionary - distance, length
 
         if(match.second > 0) {  // If a match is found, encode the distance and length
             output.push_back(static_cast<char>(match.first));
@@ -165,8 +165,8 @@ std::vector<char> LZMACompression::decompress(std::vector<char> &compressedData)
     for(size_t i = 0; i < rangeDecodedData.size();) {
         if(i + 1 < rangeDecodedData.size() && rangeDecodedData[i] < dictionary.size() && rangeDecodedData[i + 1] > 0) {
             // Since current byte and next byte are interpreted as distance and length, add the corresponding data from the dictionary to the output
-            int distance = rangeDecodedData[i];
-            int length = rangeDecodedData[i + 1];
+            unsigned int distance = rangeDecodedData[i];
+            unsigned int length = rangeDecodedData[i + 1];
 
             for(int j = 0; j < length; j++)
                 output.push_back(dictionary[distance]);
