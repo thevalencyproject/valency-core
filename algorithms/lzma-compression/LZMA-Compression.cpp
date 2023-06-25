@@ -53,6 +53,18 @@ int LZMACompression::decodeLength(std::pair<int, int> encodedLength) {
     return encodedLength.first / 2;
 }
 
+std::map<char, float> LZMACompression::calculateSymbolProbabilities(std::vector<char> dataStream) {
+    std::map<char, float> probabilities;
+
+    for(char c : dataStream)        // Count the occurence of each byte
+        probabilities[c]++;
+
+    for(auto& p : probabilities)    // Convert counts to probabilities
+        p.second /= dataStream.size();
+    
+    return probabilities;
+}
+
 std::vector<char> LZMACompression::rangeEncode(std::vector<char> dataStream) {
     std::vector<char> output;
     unsigned int low = 0;
@@ -89,7 +101,7 @@ std::vector<char> LZMACompression::rangeDecode(std::vector<char> encodedDataStre
     unsigned int range = static_cast<unsigned int>(-1);
     unsigned int code = 0;
 
-    std::map<char, float> probabilities = getProbabilityDistribution(encodedDataStream);
+    std::map<char, float> probabilities = calculateSymbolProbabilities(encodedDataStream);
 
     // Decode each symbol in the encodedDataStream
     for(size_t i = 0; i < encodedDataStream.size(); i++) {

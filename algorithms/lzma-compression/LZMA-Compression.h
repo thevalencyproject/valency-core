@@ -21,7 +21,6 @@ private:
     std::pair<int, int> encodeLength(int length);                                           // Encodes the given length using LZMA's match length encoding
     int decodeLength(std::pair<int, int> encodedLength);                                    // Decodes the given length using LZMA'z match length encoding
     std::map<char, float> calculateSymbolProbabilities(std::vector<char> dataStream);       // Calculates the symbol probabilities from the data stream
-    std::map<char, float> getProbabilityDistribution(std::vector<char> encodedDataStream);  // Gets the symbol probabilities from the encoded data stream
     std::vector<char> rangeEncode(std::vector<char> dataStream);                            // Encodes the given data stream using range encoding
     std::vector<char> rangeDecode(std::vector<char> encodedDataStream);                     // Decodes the given data stream using range encoding
 
