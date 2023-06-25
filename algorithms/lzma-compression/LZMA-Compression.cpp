@@ -134,11 +134,54 @@ std::vector<char> LZMACompression::rangeDecode(std::vector<char> encodedDataStre
 }
 
 std::vector<char> LZMACompression::compress(std::vector<char> &inputData) {
-    
+    std::vector<char> output;
+
+    for(size_t i = 0; i < inputData.size();) {
+        std::pair<size_t, size_t> match = findMatch(inputData, i);   // Find the longest match in the dictionary - distance, length
+
+        if(match.second > 0) {  // If a match is found, encode the distance and length
+            output.push_back(static_cast<char>(match.first));
+            output.push_back(static_cast<char>(match.second));
+
+            i += match.second;  // Skip ahead by the length of the match
+
+        } else {                // If no match is found, process the unmatched byte
+            std::vector<char> unmatchedByte = processUnmatchedBytes({inputData[i]});
+            output.insert(output.end(), unmatchedByte.begin(), unmatchedByte.end());
+
+            i++;    // Move to the next byte
+        }
+    }
+
+    output = rangeEncode(output);   // Perform range encoding on the output
+    return output;
 }
 
 std::vector<char> LZMACompression::decompress(std::vector<char> &compressedData) {
-    
+    std::vector<char> output;
+
+    std::vector<char> rangeDecodedData = rangeDecode(compressedData);   // Range Decode the data
+
+    for(size_t i = 0; i < rangeDecodedData.size();) {
+        if(i + 1 < rangeDecodedData.size() && rangeDecodedData[i] < dictionary.size() && rangeDecodedData[i + 1] > 0) {
+            // Since current byte and next byte are interpreted as distance and length, add the corresponding data from the dictionary to the output
+            int distance = rangeDecodedData[i];
+            int length = rangeDecodedData[i + 1];
+
+            for(int j = 0; j < length; j++)
+                output.push_back(dictionary[distance]);
+
+            i += 2;    // Move ahead by 2 bytes in the input
+
+        } else {       // Otherwise, process the byte as unmatched
+            std::vector<char> matchedByte = processUnmatchedBytes({rangeDecodedData[i]});
+            output.insert(output.end(), matchedByte.begin(), matchedByte.end());
+
+            i++;       // Move to the next byte
+        }
+    }
+
+    return output;
 }
 
 std::string LZMACompression::compress(std::string &inputData) {
