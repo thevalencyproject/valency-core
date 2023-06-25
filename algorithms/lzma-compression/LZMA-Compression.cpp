@@ -38,7 +38,7 @@ std::vector<char> LZMACompression::processUnmatchedBytes(std::vector<char> unmat
 
     // Perform range encoding on the unmatched bytes: here, it is simplified to just scaling the character's ASCII value by probability
     for(char c : unmatchedBytes)    // Will be changed out for a more robust range encoding function in the future
-        output.push_back(static_cast<char>(c * probabilities[c]));
+        output.push_back(c * probabilities[c]);
     
     return output;
 }
@@ -66,14 +66,14 @@ std::map<char, float> LZMACompression::calculateSymbolProbabilities(std::vector<
 std::vector<char> LZMACompression::rangeEncode(std::vector<char> dataStream) {
     std::vector<char> output;
     unsigned int low = 0;
-    unsigned int range = static_cast<unsigned int>(-1);
+    unsigned int range = -1;
 
     std::map<char, float> probabilities = calculateSymbolProbabilities(dataStream);     // Get the probability of each symbol
 
     for(char symbol : dataStream) {
         // Calculate the range for the symbol based on the probabilities
         unsigned int scale = range;
-        unsigned int high = low + static_cast<unsigned int>(scale * probabilities[symbol]);
+        unsigned int high = low + (scale * probabilities[symbol]);
         range = high - low;
 
         // Update the low value based on the cumulative probability of the symbols
@@ -85,7 +85,7 @@ std::vector<char> LZMACompression::rangeEncode(std::vector<char> dataStream) {
             cumulativeProbability += p.second;
         }
 
-        low += static_cast<unsigned int>(scale * cumulativeProbability);
+        low += (scale * cumulativeProbability);
 
         // STILL TO IMPLEMENT HERE: Handing carrying, rescaling and output bits here
     }
@@ -96,7 +96,7 @@ std::vector<char> LZMACompression::rangeEncode(std::vector<char> dataStream) {
 std::vector<char> LZMACompression::rangeDecode(std::vector<char> encodedDataStream) {
     std::vector<char> output;
     unsigned int low = 0;
-    unsigned int range = static_cast<unsigned int>(-1);
+    unsigned int range = -1;
     unsigned int code = 0;
 
     std::map<char, float> probabilities = calculateSymbolProbabilities(encodedDataStream);
@@ -107,7 +107,7 @@ std::vector<char> LZMACompression::rangeDecode(std::vector<char> encodedDataStre
 
         // Determine which range the code falls into:
         for(auto&p : probabilities) {
-            unsigned int high = low + static_cast<unsigned int>(scale * p.second);
+            unsigned int high = low + (scale * p.second);
 
             if(code < high) {
                 output.push_back(p.first);
@@ -122,7 +122,7 @@ std::vector<char> LZMACompression::rangeDecode(std::vector<char> encodedDataStre
                     cumulativeProbability += prevP.second;
                 }
 
-                low += static_cast<unsigned int>(scale * cumulativeProbability);
+                low += scale * cumulativeProbability;
                 break;
             }
         }
@@ -140,8 +140,8 @@ std::vector<char> LZMACompression::compress(std::vector<char> &inputData) {
         std::pair<unsigned int, unsigned int> match = findMatch(inputData, i);   // Find the longest match in the dictionary - distance, length
 
         if(match.second > 0) {  // If a match is found, encode the distance and length
-            output.push_back(static_cast<char>(match.first));
-            output.push_back(static_cast<char>(match.second));
+            output.push_back(match.first);
+            output.push_back(match.second);
 
             i += match.second;  // Skip ahead by the length of the match
 
