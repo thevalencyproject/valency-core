@@ -7,20 +7,18 @@ void LZMACompression::initialiseDictionary(size_t size) {
     dictionary.resize(size, 0);
 }
 
-std::pair<int, int> LZMACompression::findMatch(std::vector<char> sequence) {
-    int matchingDistance = -1;
-    int matchingLength = -1;
+std::pair<int, int> LZMACompression::findMatch(std::vector<char> sequence, size_t position) {
+    int matchingDistance = 0;
+    int matchingLength = 0;
 
-    // Check every position in the dictionary
-    for(int i = 0; i < dictionary.size(); i++) {
-        int length = 0;
+    for(size_t i = 0; i < dictionary.size(); i++) {
+        size_t length = 0;
 
-        // Compute the length of the match
-        while(length < sequence.size() && dictionary[(i + length) % dictionary.size()] == sequence[length])
+        while(position + length < sequence.size() && i + length < dictionary.size() && sequence[position + length] == dictionary[i + length])
             length++;
-
+        
         if(length > matchingLength) {
-            matchingDistance = i;
+            matchingDistance = dictionary.size() - i;
             matchingLength = length;
         }
     }
@@ -133,4 +131,20 @@ std::vector<char> LZMACompression::rangeDecode(std::vector<char> encodedDataStre
     }
 
     return output;
+}
+
+std::vector<char> LZMACompression::compress(std::vector<char> &inputData) {
+    
+}
+
+std::vector<char> LZMACompression::decompress(std::vector<char> &compressedData) {
+    
+}
+
+std::string LZMACompression::compress(std::string &inputData) {
+    
+}
+
+std::string LZMACompression::decompress(std::string &compressedData) {
+    
 }
