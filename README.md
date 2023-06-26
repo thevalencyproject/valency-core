@@ -10,9 +10,17 @@ Each module in this repository is designed to be modular for reuse in other cool
 7. File Reader and Writer
 8. Quicksort
 9. SHA-256 Hashing Algorithm
-std::string encrypt(std::string k, std::string d);10. LZMA Compression Algorithm
+10. LZMA Compression Algorithm
 11. Traceable Ring Signatures
 12. GUI Framework
+<br>
+
+**Scroll Down for Implementation Instructions**
+
+<br>
+<br>
+<br>
+<br>
 <br>
 
 ## Networking Framework
@@ -55,8 +63,18 @@ std::string communicate(std::string clientMessage) {
 ```s.run(&port, comm);```
 
 <br>
+<br>
+<br>
+<br>
+<br>
 
 ## Onion Routing
+
+<br>
+<br>
+<br>
+<br>
+<br>
 
 ## AES Symmetric Encryption
 The AES-Encryption algorithm is used to encrypt and decrypt data using a single key. This framework allows for use of 128bit, 192bit, or 256bit AES-Encryption. The public functions allow for the input and output of either char vector's or strings (char vector step-by-step shown for encryption, and string step-by-step shown for decryption).<br>
@@ -80,6 +98,10 @@ The AES-Encryption algorithm is used to encrypt and decrypt data using a single 
 4. Call the decrypt function somewhere - this will return a either a string or a vector of unsigned char's as output: <br>
 ```std::string output = aes.decrypt(key, data);``` <br>
 
+<br>
+<br>
+<br>
+<br>
 <br>
 
 ## NTRUencrypt Asymmetric Encryption
@@ -124,6 +146,11 @@ The keysize is dependant on the strength chosen in the constructor. The private 
 1. Get the cipher generated with your public key: ```std::string cipher = "some_data";```
 2. Get your private key (generated with ntru.generatePrivateKey(seed)): ```std::string privateKey = "some_key";```
 3. Decrypt the cipher using the decrypt function: ```std::string output = ntru.decrypt(privateKey, cipher);```
+
+<br>
+<br>
+<br>
+<br>
 <br>
 
 ## Random Algorithm
@@ -135,8 +162,18 @@ The keysize is dependant on the strength chosen in the constructor. The private 
 ```r.getRandomNumber(&min, &max, &seed);```, or in use: ```int output = r.getRandomNumber(&min, &max, &seed);```
 
 <br>
+<br>
+<br>
+<br>
+<br>
 
 ## Console UI Framework
+
+<br>
+<br>
+<br>
+<br>
+<br>
 
 ## File Reader and Writer
 **File Reader** <br>
@@ -155,6 +192,10 @@ The keysize is dependant on the strength chosen in the constructor. The private 
 5. Call the createFile function (this will write the file): ```writer.createFile(&data, &path);```
 
 <br>
+<br>
+<br>
+<br>
+<br>
 
 ## Quicksort
 **How to Use It:**
@@ -164,6 +205,10 @@ The keysize is dependant on the strength chosen in the constructor. The private 
 ```int n = 10; float array[n] = {15.23, 85.15, 25.0, 96.87, 64.45, 13.15, 90.25, 87.85, 36.97, 25.35};```
 4. Call the sort function (takes in the leftmost index, and the pivot - usually rightmost index) - this will sort the input array: ```qsrt.sort(array, 0, n-1);```
 
+<br>
+<br>
+<br>
+<br>
 <br>
 
 ## SHA-256 Hashing Algorithm
@@ -175,11 +220,49 @@ The keysize is dependant on the strength chosen in the constructor. The private 
 ```sha.hash(data);```, or in use: ```std::string output = sha.hash(data);```
 
 <br>
+<br>
+<br>
+<br>
+<br>
 
 ## LZMA Compression Algorithm
+**Setup** <br>
+1. Include LZMA-Compression.h: ```#include "LZMA-Compression.h";```
+2. Create an LZMACompression object: ```LZMACompression lzma;```
+<br>
+
+**Compression** <br>
+1. Get the data you want to compress (taken in as a string or char vector): ```std::string data = "Some Data!";```
+2. Call the compress function - this will return the compressed data as the input type: <br>
+```std::string compressed = lzma.compress(&data);```
+<br>
+
+**Decompression** <br>
+1. Get the compressed data you want to decompress (taken in as a string or char vector): <br>
+```std::string compressed = "Compressed Data!";```
+2. Call the decompress function - this will return the decompressed data as the input type: <br>
+```std::string decompressed = lzma.decompress(&compressed);```
+
+<br>
+<br>
+<br>
+<br>
+<br>
 
 ## Traceable Ring Signatures
 
+<br>
+<br>
+<br>
+<br>
+<br>
+
 ## GUI Framework
+
+<br>
+<br>
+<br>
+<br>
+<br>
 
 ## Custom Types
