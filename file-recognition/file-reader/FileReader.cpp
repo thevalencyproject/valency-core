@@ -8,10 +8,10 @@ std::vector<std::string> FileReader::getData(std::string* path) {
     std::ifstream file(*path);
     if(file.is_open()) {
         // Push back each line from the file into the vector
-        while(std::getline(file, line)) {
+        while(std::getline(file, line))
             data.push_back(line);
-        }
-    } else {/* THROW AN ERROR */}
+
+    } else { errorLog = "Error reading from data stream"; }
 
     return data;
 }

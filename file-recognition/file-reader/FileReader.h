@@ -6,9 +6,9 @@
 #include <fstream>
 
 
-class FileReader {
-public:
-    FileReader() {}
+struct FileReader {
+    FileReader() {};
+    std::string errorLog;
 
     // Generates a vector with each line of the inputted file from the filepath specified
     std::vector<std::string> getData(std::string* path);
