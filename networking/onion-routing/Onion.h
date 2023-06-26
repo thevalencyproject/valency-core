@@ -4,6 +4,7 @@
 #include <ctime>
 #include <vector>
 #include <string>
+#include "Client.h"
 #include "Random.h"
 #include "NodeInfo.h"
 #include "NTRUencrypt.h"
@@ -16,6 +17,7 @@ private:
     int ntruSize;   // 0 - 7 -> see NTRUencrypt.h for details
 
     Random r;       // Used to generate the AES key for each node
+    Client c;       // Used to communicate with the nodes
 
     std::vector<std::string> aesKeys;
     void generateAESKeys(std::vector<NodeInfo> nodes, std::string data);
@@ -25,6 +27,10 @@ public:
 
     // The final destination location (where the last node should send the data) should be the final network location in the nodes vector (address doesnt matter)
     std::string createOnion(std::vector<NodeInfo> nodes, std::string data);
+
+    // Communicate using onion routing - uses a function pointer for communication
+    template<typename T>
+    void onionRouting(std::vector<NodeInfo> nodes, std::string data, std::string (T::*communicate)(std::string));
 };
 
 #endif
