@@ -139,6 +139,22 @@ The keysize is dependant on the strength chosen in the constructor. The private 
 ## Console UI Framework
 
 ## File Reader and Writer
+**File Reader** <br>
+1. Include FileReader.h: ```#include "FileReader.h"```
+2. Create a FileReader Object: ```FileReader reader;```
+3. Get the path to the file you want to read: ```std::string path = "/folder/filename.extension";```
+4. Call the getData function (this will return a string vector - each index is the next line): <br> ```std::vector<std::string> fileData = reader.getData(&path);```
+<br>
+
+**File Writer** <br>
+1. Include FileWriter.h: ```#include "FileWriter.h"```
+2. Create a FileWriter Object: ```FileWriter writer;```
+3. Get the desired filename, and append it onto where you want the file to be written: <br>
+```std::string path = "/folder/filename.extension";```
+4. Get the data - this can be inputted as a string, or as a string vector: ```std::string data = "Some Data";```
+5. Call the createFile function (this will write the file): ```writer.createFile(&data, &path);```
+
+<br>
 
 ## Quicksort
 **How to Use It:**
