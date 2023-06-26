@@ -24,7 +24,7 @@ private:
     bool createSocket(std::string ip, int* port);
     bool initialiseConnection();
 
-    bool handleConnection(std::string (*communicate)(std::string));
+    bool handleConnection(std::string (*communicate)(std::string), std::string initialMessage);
 
 public:
     Client();
@@ -32,8 +32,9 @@ public:
 
     std::string errorLog;   // If anything fails, this will automatically be set to the relevant error message
 
+    // Communicate using your own custom function pointer - The initial message is what is first sent to the server
     template<typename T>
-    bool connectToServer(std::string* ip, int* port, std::string (T::*communicate)(std::string));
+    bool connectToServer(std::string* ip, int* port, std::string (T::*communicate)(std::string), std::string initialMessage);
     void disconnect();
 };
 

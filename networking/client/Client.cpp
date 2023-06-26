@@ -2,9 +2,12 @@
 
 
 // Modify this function to achieve your desired outcomes!
-bool Client::handleConnection(std::string (*communicate)(std::string)) {
+bool Client::handleConnection(std::string (*communicate)(std::string), std::string initialMessage) {
     int counter = 0;
-    std::string message = "https://youtu.be/xm3YgoEiEDc";   // First message to be sent
+    std::string message = initialMessage;
+    if(initialMessage == "")
+        std::string message = "https://youtu.be/xm3YgoEiEDc";   // Default Message :)
+    
 
     while(1) {
         // Send something to the server
@@ -47,7 +50,7 @@ Client::~Client() {
 }
 
 template<typename T>
-bool Client::connectToServer(std::string* ip, int* port, std::string (T::*communicate)(std::string)) {
+bool Client::connectToServer(std::string* ip, int* port, std::string (T::*communicate)(std::string), std::string initialMessage) {
     if(createSocket(*ip, port) == 1 || initialiseConnection() == 1)
         return 1;
     
