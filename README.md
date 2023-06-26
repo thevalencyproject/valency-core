@@ -38,10 +38,10 @@ std::string communicate(std::string serverMessage) {
 }
 ```
 3. Include Client.h: ```#include "Client.h"```
-4. Create a Client Object: ```Client c;```
+4. Create a Client Object: ```Client client;```
 5. Get the Server IP Address, Port, and communicate() function pointer: <br>```std::string ip = "192.168.1.1"; int port = 8088; std::string (*comm)(std::string) = communicate;```
 6. Connect to the server - this will automatically communicate using the communicate() function we configured earlier: <br>
-```c.connectToServer(&ip, &port, comm);```
+```client.connectToServer(&ip, &port, comm);```
 
 <br>
 
@@ -57,10 +57,10 @@ std::string communicate(std::string clientMessage) {
 }
 ```
 3. Include Server.h: ```#include "Server.h"```
-4. Create a Server Object: ```Server s;```
+4. Create a Server Object: ```Server server;```
 5. Get the Port and communicate() function pointer: <br>```int port = 8088; std::string (*comm)(std::string) = communicate;```
 6. Run the server - this will automatically communicate with clients using the communicate() function we configured earlier: <br>
-```s.run(&port, comm);```
+```server.run(&port, comm);```
 
 <br>
 <br>
@@ -69,6 +69,39 @@ std::string communicate(std::string clientMessage) {
 <br>
 
 ## Onion Routing
+**Onion Client** <br>
+1. Include Onion.h: ```#include "Onion.h";```
+2. Create an Onion Object: ```Onion onion;```
+3. Create a vector of the Node's you would like to route traffic through: <br>
+```
+NodeInfo n1(NetworkLocation l1(port1, ip1), nodeNTRUPublicKey1);
+NodeInfo n2(NetworkLocation l2(port2, ip2), nodeNTRUPublicKey2);
+NodeInfo n3(NetworkLocation l3(port3, ip3), nodeNTRUPublicKey3);
+
+std::vector<NodeInfo> nodes;
+nodes.push_back(n1); nodes.push_back(n2); nodes.push_back(n3); 
+```
+4. Get the data you want to send: ```std::string data = "Some Data!";```
+5. Create a communicate() function - This is the function that gets run everytime there is a message from the destination server, it takes in a string (server message), and returns a string (what you want to send back to the server). <br>
+```
+std::string communicate(std::string serverMessage) {
+  if(serverMessage == "Some Data") {
+    return "Some Reply";
+  } else {
+    return "/quit";
+  }
+}
+```
+6. Call the onionRouting() function - this will communicate: ```onion.onionRouting(nodes, data, communicate);```
+<br>
+
+**Onion Node** <br>
+1. Include OnionNode.h: ```#include "OnionNode.h"```
+2. Create an OnionNode object - this takes in the port in which communication is made: ```OnionNode node = OnionNode(some_port);```
+3. Get an NTRUencrypt public and private key (this can be done using the NTRUencrypt framework in Valency Core): <br>
+```std::string private = "Some Private Key"; std::string public = "Some Public Key";```
+4. Call the initialise() function - this takes in the private and public keys: ```node.initialise(public, private);```
+5. Call the run() function: ```node.run();```
 
 <br>
 <br>
@@ -156,10 +189,10 @@ The keysize is dependant on the strength chosen in the constructor. The private 
 ## Random Algorithm
 **How to Use It:**
 1. Include Random.h: ```#include "Random.h"```
-2. Create a Random Object: ```Random r;```
+2. Create a Random Object: ```Random random;```
 3. Get a minimum, maximum, and seed value - seed is simply a random integer: ```int min = 0, max = 10, seed = 3;```
 4. Call the random function somewhere - this will return a random integer between the minimum and maximum defined in step 3: <br>
-```r.getRandomNumber(&min, &max, &seed);```, or in use: ```int output = r.getRandomNumber(&min, &max, &seed);```
+```random.getRandomNumber(&min, &max, &seed);```, or in use: ```int output = random.getRandomNumber(&min, &max, &seed);```
 
 <br>
 <br>
