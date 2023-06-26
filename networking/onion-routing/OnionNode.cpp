@@ -38,7 +38,7 @@ std::string OnionNode::communicate(std::string data) {
     std::string (OnionNode::*blank)(std::string);   // Using a blank message communication function, as we do not need to communicate
 
     // Send the data to the next node in the network and tell the previous node/client to disconnect
-    client.connectToServer(&ip, &port, blank);
+    client.connectToServer(&ip, &port, blank, data);
     return "/quit";
 }
 
