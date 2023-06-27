@@ -201,6 +201,75 @@ The keysize is dependant on the strength chosen in the constructor. The private 
 <br>
 
 ## Console UI Framework
+This UI framework takes strings as input for single-line functions, and string vectors for multi-line functions. <br>
+The module supports multiple styles, with the ability to add custom styles (submit a pull request):
+
+| Style         | Number        |
+|:-------------:|:-------------:|
+| Box           | 0             |
+| Minimalistic  | 1             |
+| Hyphen        | 2             |
+| Arrow         | 3             |
+
+<br>
+
+**Setup**<br>
+1. Include ConsoleUI.h: ```#include "ConsoleUI.h"```
+2. Create a ConsoleUI Object - this takes in your desired style: ```ConsoleUI ui = ConsoleUI(0);```
+
+<br>
+
+**Functionality**<br>
+To call the functions, an input of either string (single-line) or string vector (multi-line) is required. Below is a table of single and multi line functions:
+
+| Single-Line   | Multi-Line    |
+|:-------------:|:-------------:|
+|               | header()      |
+| message()     | message()     |
+| input()       | input()       |
+|               | menu()        |
+
+There also exists the footer() function which does not take an input. The setStyle() function takes in the style you want to switch to. <br>
+Below are some example function implementations:
+
+**Example 1.** Call the header() function to produce a header with the inputted titles: <br>
+```
+std::vector<std::string> headerText;
+headerText.push_back("First Line");
+headerText.push_back("Second Line");
+ui.header(headerText);
+```
+will display the following when the style is Box:
+```
+ ______________________________
+|                              |
+|          First Line          |
+|         Second Line          |
+|______________________________|
+```
+
+<br><br>
+
+**Example 2.** Call the menu() function to produce a menu with the inputed string vector and a closed top (this will return the user selection): <br>
+```
+std::vector<std::string> menuText;
+menuText.push_back("First Option");
+menuText.push_back("Second Option");
+menuText.push_back("Third Option");
+int userResponse = ui.menu(menuText, true);
+```
+will display the following when the style is Box:
+```
+ ______________________________
+|                              |
+|  Please Select One:          |
+|   1. First Option            |
+|   2. Second Option           |
+|   3. Third Option            |
+|______________________________|
+
+    -> 
+```
 
 <br>
 <br>
