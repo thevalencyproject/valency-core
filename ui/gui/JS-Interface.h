@@ -2,21 +2,26 @@
 #define JSINTERFACE_H
 
 #include <string>
+#include <vector>
+#include "Server.h"
 
 
 class JSInterface {
 private:
-    std::string htmlPath, jsPath;
+    int port;
+    Server server;   // The server that passes through information from JS and C++
 
+    std::vector<std::string (*)(std::string)> functions;
+    
 public:
     JSInterface() {};
 
-    // Takes in the path to the UI javascript and HTML path - HTML interfaces with JS which interfaces with C++
-    void setup(std::string htmlFilePath, std::string jsFilePath);
-
-    // Runs the interface - this detects inputs and sends outputs through JS.
-    void run();
-    void stop();
+    // Runs the interface - this detects inputs and sends outputs through JS by hosting a server which acts as a middleman.
+    // The Function Pointer Vector contains the functions that are run when the a message is received by the JS script
+    //   -> the functions are run depending on what the first 3 bytes of the received message is (000 = 1st func, 001 = 2nd func, ..., 201 = 202nd func)
+    //   -> the string that the function returns is what is sent back to the JS script
+    template<typename T>
+    void run(int localPort, std::vector<std::string (*)(std::string)>);
 };
 
 #endif
