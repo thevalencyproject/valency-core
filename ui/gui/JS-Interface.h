@@ -11,8 +11,9 @@ private:
     int port;
     Server server;   // The server that passes through information from JS and C++
 
+    std::string communicate(std::string input);
     std::vector<std::string (*)(std::string)> functions;
-    
+
 public:
     JSInterface() {};
 
@@ -21,7 +22,7 @@ public:
     //   -> the functions are run depending on what the first 3 bytes of the received message is (000 = 1st func, 001 = 2nd func, ..., 201 = 202nd func)
     //   -> the string that the function returns is what is sent back to the JS script
     template<typename T>
-    void run(int localPort, std::vector<std::string (*)(std::string)>);
+    void run(int localPort, std::vector<std::string (*)(std::string)> funcs);
 };
 
 #endif
