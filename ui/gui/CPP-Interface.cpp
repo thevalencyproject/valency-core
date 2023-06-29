@@ -2,7 +2,7 @@
 
 
 template<typename T>
-void CPPInterface::run(int localPort, std::vector<std::string (*)(std::string)> funcs) {
+void CPPInterface::run(int localPort, std::vector<std::string (T::*)(std::string)> funcs) {
     port = localPort;
     functions = funcs;
     server.run(&port, communicate);
