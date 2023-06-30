@@ -76,7 +76,7 @@ bool WinternitzSignature::validateSignature(unsigned char* signature, unsigned c
     for(int i = 0; i < 16; i++) {   // Each signature element
         // Calculate the hash amount
         int hashAmount;
-        hashAmount = 256 - static_cast<int>(message[i]);
+        hashAmount = 256 - static_cast<int>(messageHash[i]);
 
         // Now we have to get the correct 16 bytes from the signature
         char segment[] = "                ";
