@@ -40,7 +40,8 @@ void WinternitzSignature::generatePublicKey(unsigned char* privateKey, unsigned 
     }
 }
 
-void WinternitzSignature::generateSignature(unsigned char* message, unsigned char* privateKey, unsigned char* signature) {for(int i = 0; i < 16; i++) {
+void WinternitzSignature::generateSignature(unsigned char* message, unsigned char* privateKey, unsigned char* signature) {
+    for(int i = 0; i < 16; i++) {
         // Calculate the hash amount
         int hashAmount;
         hashAmount = 256 - static_cast<int>(message[i]);
@@ -61,4 +62,41 @@ void WinternitzSignature::generateSignature(unsigned char* message, unsigned cha
         for(int j = i * 16; j < (16 + (i * 8)); j++)
             signature[j] = segment[j - (i * 16)];
     }
+}
+
+bool WinternitzSignature::validateSignature(unsigned char* signature, unsigned char* message, unsigned char* publicKey) {
+    unsigned char output[256];  // The output of the verification function - checked against public key
+
+    char unhashed[] = "                ";
+    for(int i = 0; i < sizeof(message); i++)
+        unhashed[i] = message[i];
+
+    hashMessage(unhashed);  // messageHash now contains the hashed message
+
+    for(int i = 0; i < 16; i++) {   // Each signature element
+        // Calculate the hash amount
+        int hashAmount;
+        hashAmount = 256 - static_cast<int>(message[i]);
+
+        // Now we have to get the correct 16 bytes from the signature
+        char segment[] = "                ";
+        for(int j = i * 16; j < (16 + (i * 8)); j++)
+            segment[j - (i * 16)] = signature[j];
+
+        // Now we have to hash the segment hashAmount times
+        std::string hashOutput;
+        for(int j = 0; j < hashAmount; j++) {
+            hashOutput = sha.hash(segment);
+            std::strcpy(segment, hashOutput.c_str());
+        }
+
+        // Copy it to the end of the output array
+        for(int j = i * 16; j < (16 + (i * 8)); j++)
+            output[j] = segment[j - (i * 16)];
+    }
+
+    if(output == publicKey)
+        return true;
+
+    return false;
 }
