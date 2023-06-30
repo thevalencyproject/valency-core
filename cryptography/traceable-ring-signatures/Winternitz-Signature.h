@@ -2,7 +2,6 @@
 #define WINTERNITZ_SIGNATURE_H
 
 #include <string>
-#include <vector>
 #include <bits/stdc++.h>
 #include "Random.h"
 #include "SHA256.h"
@@ -15,7 +14,7 @@
         -> Message Hash: unsigned char hash[16]
 
         -> Signature: unsigned char signature[256]
-    */
+*/
 class WinternitzSignature {
 private:
     Random random;
@@ -29,8 +28,9 @@ public:
 
     void generatePrivateKey(size_t seed, unsigned char* privateKey);
     void generatePublicKey(unsigned char* privateKey, unsigned char* publicKey);
-
     void generateSignature(unsigned char* message, unsigned char* privateKey, unsigned char* signature);
+
+    bool validateSignature(unsigned char* signature, unsigned char* message);
 };
 
 #endif
