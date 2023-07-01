@@ -7,96 +7,67 @@ void WinternitzSignature::hashMessage(char* message) {
 }
 
 void WinternitzSignature::generatePrivateKey(size_t seed, unsigned char* privateKey) {
-    size_t min = 0;
     size_t max = 256;
-    for(int i = 0; i < 256; i++)
-        privateKey[i] = (unsigned char)random.getRandomNumber(&min, &max, &seed);
+    for(int i = 0; i < 256; i++)                                                    // Loop over the size of the private key
+        privateKey[i] = (unsigned char)random.getRandomNumber(0, &max, &seed);      // Get a random char between 0 and 256
 }
 
 void WinternitzSignature::generatePublicKey(unsigned char* privateKey, unsigned char* publicKey) {
-    int multiple = 0;
+    char segment[] = "";
     for(int i = 0; i < 16; i++) {
-
-        // Get the segment that needs to be hashed 256 times
-        char segment[] = "                ";
-        for(int j = 0; j < 16; j++) {
-            segment[j] = privateKey[multiple];
-            multiple++;
-        }
-
-        // Hash the segment 256 times
-        std::string hashOutput;
+        std::copy(privateKey + (i * 16), privateKey + ((i + 1) * 16), segment);     // Get the segment that needs to be hashed 256 times
+        
+        std::string hash;
         for(int j = 0; j < 256; j++) {
-            hashOutput = sha.hash(segment);
-            std::strcpy(segment, hashOutput.c_str());
+            hash = sha.hash(segment);                                               // Hash the segment 256 times
+            std::strcpy(segment, hash.c_str());
         }
 
-        // Copy it to the end of the public key array
-        int temp = multiple - 16;
-        for(int j = 0; j < 16; j++) {
-            publicKey[temp] = segment[temp];
-            temp++;
-        }
+        std::copy(segment, segment + ((i + 1) * 16), publicKey + (i * 16));         // Copy the segment into the output
     }
 }
 
 void WinternitzSignature::generateSignature(unsigned char* message, unsigned char* privateKey, unsigned char* signature) {
+    int hashRepeat;
+    char segment[] = "";
     for(int i = 0; i < 16; i++) {
-        // Calculate the hash amount
-        int hashAmount;
-        hashAmount = 256 - static_cast<int>(message[i]);
+        std::copy(privateKey + (i * 16), privateKey + ((i + 1) * 16), segment);     // Get the segment that needs to be hashed
+        hashRepeat = 256 - static_cast<int>(message[i]);                            // Calculate the number of times the segment will be hashed
 
-        // Get the next 16 bytes of the array
-        char segment[] = "                ";
-        for(int j = i * 16; j < (16 + (i * 8)); j++)
-            segment[j - (i * 16)] = privateKey[j];
-
-        // Hash the corresponding 16 byte sequence of the privateKey array hashAmount times
         std::string hashOutput;
-        for(int j = 0; j < hashAmount; j++) {
-            hashOutput = sha.hash(segment);
+        for(int j = 0; j < hashRepeat; j++) {
+            hashOutput = sha.hash(segment);                                         // Hash the segment the calculated number of times
             std::strcpy(segment, hashOutput.c_str());
         }
 
-        // Copy it to the end of the signature array
-        for(int j = i * 16; j < (16 + (i * 8)); j++)
-            signature[j] = segment[j - (i * 16)];
+        std::copy(segment, segment + ((i + 1) * 16), signature + (i * 16));         // Copy the segment into the output
     }
 }
 
 bool WinternitzSignature::validateSignature(unsigned char* signature, unsigned char* message, unsigned char* publicKey) {
-    unsigned char output[256];  // The output of the verification function - checked against public key
+    unsigned char output[256];   // The output of the verification algorithm - checked against public key
+    char bareMessage[] = "";     // The unhashed message, converted to char for use in the hash function
 
-    char unhashed[] = "                ";
-    for(int i = 0; i < sizeof(message); i++)
-        unhashed[i] = message[i];
+    std::copy(message, message + sizeof(message), bareMessage);     // Copy unsigned char message to char
+    hashMessage(bareMessage);                                       // messageHash now contains the hashed message
 
-    hashMessage(unhashed);  // messageHash now contains the hashed message
+    int hashRepeat;
+    char segment[] = "";
+    for(int i = 0; i < 16; i++) {
+        std::copy(signature + (i * 16), signature + ((i + 1) * 16), segment);   // Get the segment that needs to be hashed
+        hashRepeat = 256 - static_cast<int>(messageHash[i]);                    // Calculate the number of times the segment will be hashed
 
-    for(int i = 0; i < 16; i++) {   // Each signature element
-        // Calculate the hash amount
-        int hashAmount;
-        hashAmount = 256 - static_cast<int>(messageHash[i]);
-
-        // Now we have to get the correct 16 bytes from the signature
-        char segment[] = "                ";
-        for(int j = i * 16; j < (16 + (i * 8)); j++)
-            segment[j - (i * 16)] = signature[j];
-
-        // Now we have to hash the segment hashAmount times
         std::string hashOutput;
-        for(int j = 0; j < hashAmount; j++) {
-            hashOutput = sha.hash(segment);
+        for(int j = 0; j < hashRepeat; j++) {
+            hashOutput = sha.hash(segment);                                     // Hash the segment the calculated number of times
             std::strcpy(segment, hashOutput.c_str());
         }
 
-        // Copy it to the end of the output array
-        for(int j = i * 16; j < (16 + (i * 8)); j++)
-            output[j] = segment[j - (i * 16)];
+        std::copy(segment, segment + ((i + 1) * 16), output + (i * 16));        // Copy the segment into the output
     }
 
-    if(output == publicKey)
+    if(output == publicKey)    // Check signature validity by comparing with public key
         return true;
-
+    
     return false;
 }
