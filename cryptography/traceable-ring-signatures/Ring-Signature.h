@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include "Random.h"
+#include "SHA256.h"
 #include "FileReader.h"
 #include "FileWriter.h"
 #include "Winternitz-Signature.h"
@@ -23,8 +25,11 @@ struct TransactionData {
 
 class TraceableRingSignature {
 private:
-    FileReader reader;     // Used to read the public key repository file
-    FileWriter writer;     // Used to write to the public key repository file
+    SHA256 sha;                         // Used to generate the key image from the one-time private key
+    Random random;                      // Used to select the decoy keys - takes private key as input
+    FileReader reader;                  // Used to read the public key repository file
+    FileWriter writer;                  // Used to write to the public key repository file
+    WinternitzSignature winternitz;     // Used to create a signature
 
     // The public key repository - contains known public keys from the blockchain
     std::string publicKeyRepositoryPath;
@@ -38,8 +43,12 @@ public:
 
     void writeToPublicKeyRepository(std::vector<std::string> publicKeys);   // Adds to the public key repository file
 
-    // Generates a traceable ring signature - takes in the transaction amount, the receiver key, and the NTRUencrypt private key
-    RingSignature generateRingSignature(unsigned int amount, unsigned int receiver, std::string privateKey);
+    // One-time Key Generation
+    std::string generateOneTimePrivateKey(size_t seed);
+    std::string generateOneTimePublicKey(std::string privateKey);
+
+    // Generates a traceable ring signature - takes in the transaction amount, the receiver key, the private key, and the number of decoy addresses (4 - 6)
+    RingSignature generateRingSignature(unsigned int amount, unsigned int receiver, std::string privateKey, int decoys);
 };
 
 #endif
