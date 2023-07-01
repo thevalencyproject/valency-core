@@ -17,11 +17,8 @@ void WinternitzSignature::generatePublicKey(unsigned char* privateKey, unsigned 
     for(int i = 0; i < 16; i++) {
         std::copy(privateKey + (i * 16), privateKey + ((i + 1) * 16), segment);     // Get the segment that needs to be hashed 256 times
         
-        std::string hash;
-        for(int j = 0; j < 256; j++) {
-            hash = sha.hash(segment);                                               // Hash the segment 256 times
-            std::strcpy(segment, hash.c_str());
-        }
+        for(int j = 0; j < 256; j++)
+            std::strcpy(segment, sha.hash(segment).c_str());                        // Hash the segment 256 times
 
         std::copy(segment, segment + ((i + 1) * 16), publicKey + (i * 16));         // Copy the segment into the output
     }
@@ -34,11 +31,8 @@ void WinternitzSignature::generateSignature(unsigned char* message, unsigned cha
         std::copy(privateKey + (i * 16), privateKey + ((i + 1) * 16), segment);     // Get the segment that needs to be hashed
         hashRepeat = 256 - static_cast<int>(message[i]);                            // Calculate the number of times the segment will be hashed
 
-        std::string hashOutput;
-        for(int j = 0; j < hashRepeat; j++) {
-            hashOutput = sha.hash(segment);                                         // Hash the segment the calculated number of times
-            std::strcpy(segment, hashOutput.c_str());
-        }
+        for(int j = 0; j < hashRepeat; j++)
+            std::strcpy(segment, sha.hash(segment).c_str());                        // Hash the segment the calculated number of times
 
         std::copy(segment, segment + ((i + 1) * 16), signature + (i * 16));         // Copy the segment into the output
     }
@@ -57,11 +51,8 @@ bool WinternitzSignature::validateSignature(unsigned char* signature, unsigned c
         std::copy(signature + (i * 16), signature + ((i + 1) * 16), segment);   // Get the segment that needs to be hashed
         hashRepeat = 256 - static_cast<int>(messageHash[i]);                    // Calculate the number of times the segment will be hashed
 
-        std::string hashOutput;
-        for(int j = 0; j < hashRepeat; j++) {
-            hashOutput = sha.hash(segment);                                     // Hash the segment the calculated number of times
-            std::strcpy(segment, hashOutput.c_str());
-        }
+        for(int j = 0; j < hashRepeat; j++)
+            std::strcpy(segment, sha.hash(segment).c_str());                    // Hash the segment the calculated number of times
 
         std::copy(segment, segment + ((i + 1) * 16), output + (i * 16));        // Copy the segment into the output
     }
