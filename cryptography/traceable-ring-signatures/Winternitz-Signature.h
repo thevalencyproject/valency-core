@@ -18,17 +18,18 @@ private:
     Random random;
     SHA256 sha;
 
-    unsigned char messageHash[16];              // The hashed message (hashed using SHA256)
-    void hashMessage(char* message);            // Hashes the message and stores it in messageHash
-
 public:
     WinternitzSignature() {};
 
     void generatePrivateKey(size_t seed, unsigned char* privateKey);
     void generatePublicKey(unsigned char* privateKey, unsigned char* publicKey);
     void generateSignature(unsigned char* message, unsigned char* privateKey, unsigned char* signature);
+    std::string generatePrivateKey(size_t seed);
+    std::string generatePublicKey(std::string privateKey);
+    std::string generateSignature(std::string message, std::string privateKey);
 
     bool validateSignature(unsigned char* signature, unsigned char* message, unsigned char* publicKey);
+    bool validateSignature(std::string signature, std::string message, std::string publicKey);
 };
 
 #endif

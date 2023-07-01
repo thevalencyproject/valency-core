@@ -1,11 +1,6 @@
 #include "Winternitz-Signature.h"
 
 
-void WinternitzSignature::hashMessage(char* message) {
-    std::string hashedmessage = sha.hash(message);
-    std::copy(hashedmessage.begin(), hashedmessage.end(), messageHash);
-}
-
 void WinternitzSignature::generatePrivateKey(size_t seed, unsigned char* privateKey) {
     size_t max = 256;
     for(int i = 0; i < 256; i++)                                                    // Loop over the size of the private key
@@ -39,22 +34,21 @@ void WinternitzSignature::generateSignature(unsigned char* message, unsigned cha
 }
 
 bool WinternitzSignature::validateSignature(unsigned char* signature, unsigned char* message, unsigned char* publicKey) {
-    unsigned char output[256];   // The output of the verification algorithm - checked against public key
-    char bareMessage[] = "";     // The unhashed message, converted to char for use in the hash function
+    unsigned char messageHash[16];     // The hashed message
+    unsigned char output[256];         // The output of the verification algorithm - checked against public key
 
-    std::copy(message, message + sizeof(message), bareMessage);     // Copy unsigned char message to char
-    hashMessage(bareMessage);                                       // messageHash now contains the hashed message
+    std::strcpy((char*) messageHash, (char*)sha.hash((char*)message).c_str());   // Hash the message
 
     int hashRepeat;
     char segment[] = "";
     for(int i = 0; i < 16; i++) {
-        std::copy(signature + (i * 16), signature + ((i + 1) * 16), segment);   // Get the segment that needs to be hashed
-        hashRepeat = 256 - static_cast<int>(messageHash[i]);                    // Calculate the number of times the segment will be hashed
+        std::copy(signature + (i * 16), signature + ((i + 1) * 16), segment);    // Get the segment that needs to be hashed
+        hashRepeat = 256 - static_cast<int>(messageHash[i]);                     // Calculate the number of times the segment will be hashed
 
         for(int j = 0; j < hashRepeat; j++)
-            std::strcpy(segment, sha.hash(segment).c_str());                    // Hash the segment the calculated number of times
+            std::strcpy(segment, sha.hash(segment).c_str());                     // Hash the segment the calculated number of times
 
-        std::copy(segment, segment + ((i + 1) * 16), output + (i * 16));        // Copy the segment into the output
+        std::copy(segment, segment + ((i + 1) * 16), output + (i * 16));         // Copy the segment into the output
     }
 
     if(output == publicKey)    // Check signature validity by comparing with public key
