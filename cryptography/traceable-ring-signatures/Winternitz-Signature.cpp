@@ -56,3 +56,47 @@ bool WinternitzSignature::validateSignature(unsigned char* signature, unsigned c
     
     return false;
 }
+
+std::string WinternitzSignature::generatePrivateKey(size_t seed) {
+    unsigned char privateKey[256];
+
+    generatePrivateKey(seed, privateKey);
+
+    std::string output(privateKey, privateKey + sizeof(privateKey) / sizeof(privateKey));
+    return output;
+}
+
+std::string WinternitzSignature::generatePublicKey(std::string privateKey) {
+    unsigned char privKey[256];
+    unsigned char publicKey[256];
+    std::strcpy((char*) privKey, privateKey.c_str());
+
+    generatePublicKey(privKey, publicKey);
+
+    std::string output(publicKey, publicKey + sizeof(publicKey) / sizeof(publicKey));
+    return output;
+}
+
+std::string WinternitzSignature::generateSignature(std::string message, std::string privateKey) {
+    unsigned char msg[message.size()];
+    unsigned char privKey[256];
+    unsigned char signature[256];
+    std::strcpy((char*) msg, message.c_str());
+    std::strcpy((char*) privKey, privateKey.c_str());
+
+    generateSignature(msg, privKey, signature);
+
+    std::string output(signature, signature + sizeof(signature) / sizeof(signature));
+    return output;
+}
+
+bool WinternitzSignature::validateSignature(std::string signature, std::string message, std::string publicKey) {
+    unsigned char msg[message.size()];
+    unsigned char sig[256];
+    unsigned char pubKey[256];
+    std::strcpy((char*) msg, message.c_str());
+    std::strcpy((char*) sig, signature.c_str());
+    std::strcpy((char*) pubKey, publicKey.c_str());
+
+    return validateSignature(sig, msg, pubKey);
+}
