@@ -352,6 +352,22 @@ will display the following when the style is Box:
 <br>
 
 ## Traceable Ring Signatures
+**Winternitz One-Time Signature Key Generation**
+1. Include Winternitz-Signature.h: ```#include "Winternitz-Signature.h"```
+2. Create a WinternitzSignature Object: ```WinternitzSignature winternitz;```
+3. Get a seed - this should be unique: ```size_t seed = 123456;```
+4. Generate a one-time private key: ```std::string privateKey = winternitz.generatePrivateKey(seed);```
+5. Generate a one-time public key - this is shared along with the signature and message for verification: <br>
+```std::string publicKey = winternitz.generatePublicKey(privateKey);```
+
+<br>
+
+**Ring Signature Generation**
+1. Include Ring-Signature.h: ```#include "Ring-Signature.h"```
+2. Create a TraceableRingSignature Object: ```TraceableRingSignature ringsignature;```
+3. Get the transaction amount, reveiver key, sender private key, and the number of decoys in the signature: <br>
+```unsigned int amount = 1; std::string receiver = "winternitz-public-key"; std::string private = "winternitz-private-key"; unsigned short decoys = 5;```
+4. Generate the signature: ```RingSignature signature = generateRingSignature(amount, receiver, private, decoys);```
 
 <br>
 <br>
