@@ -48,7 +48,7 @@ public:
     std::string generateOneTimePublicKey(std::string privateKey);
 
     // Generates a traceable ring signature - takes in the transaction amount, the receiver key, the private key, and the number of decoy addresses (4 - 6)
-    RingSignature generateRingSignature(unsigned int amount, unsigned int receiver, std::string privateKey, int decoys);
+    RingSignature generateRingSignature(unsigned int amount, std::string receiver, std::string privateKey, unsigned short decoys);
 };
 
 #endif

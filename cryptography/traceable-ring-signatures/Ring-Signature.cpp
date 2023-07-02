@@ -16,7 +16,7 @@ void TraceableRingSignature::writeToPublicKeyRepository(std::vector<std::string>
     writer.createFile(publicKeyRepository, &publicKeyRepositoryPath);                               // Write the file
 }
 
-RingSignature TraceableRingSignature::generateRingSignature(unsigned int amount, unsigned int receiver, std::string privateKey, int decoys) {
+RingSignature TraceableRingSignature::generateRingSignature(unsigned int amount, std::string receiver, std::string privateKey, unsigned short decoys) {
     switch(decoys) { case 4: break; case 5: break; case 6: break; default: decoys = 5; }                 // Ensure decoys are in range
 
     // Select the decoy addresses (uses the private key as a secure seed for the randomness)
