@@ -376,6 +376,83 @@ will display the following when the style is Box:
 <br>
 
 ## GUI Framework
+The GUI Framework enables the communication between a C++ program and a JavaScript function - enabling the use of C++ in totally custom GUI's created using HTML and CSS! This framework relies on a locally-run websocket server on the C++ side, which the JavaScript can easily interface with. <br>
+
+**C++ Side of Things** <br>
+1. Include CPP-Interface.h: ```#include "CPP-Interface.h";```
+2. Create an CPPInterface Object: ```CPPInterface interface;```
+3. Create the custom function/s responsible for communication between GUI(JS), and program (C++) - these take in the JS messages, and return the reply message: <br>
+```
+std::string login(std::string input) {
+  if(input == "userpassword")
+        return "1";
+  
+  return "0";
+}
+```
+4. Fill a vector with all the custom function/s created in step 3 (the index of these functions are what is used in JS to reference them): <br>
+```
+template<typename T>
+std::vector<std::string (T::*)(std::string)> functions;
+functions.push_back(login);
+functions.push_back(any-other-functions);
+```
+5. Get the port you want to run the local server using: ```int port = 3030;```
+6. Call the run() function: ```interface.run(port, functions);```
+
+<br>
+
+**JavaScript Side of Things** <br>
+1. Create a WebSocket to interface with the C++ Server (localhost:PORT): ```const ws = new WebSocket(localhost:3030);```
+2. For each task in the GUI (unique button press, data input, etc), create a function to handle sending the data to the server (required): <br>
+```
+function sendLoginRequest() {
+  let i = "000";  // Append the Function Index to ensure the C++ server selects the correct processing function - the index of the function in the functions vector
+  var loginDetails = document.getElementById("user").value + document.getElementById("pass").value;
+
+  ws.send(i + loginDetails);
+}
+```
+3. If required, create the function/s to handle receiving the reply from the server: <br>
+```
+function receiveLoginSuccess(input) {  // 1 = Success, 0 = Failure
+  switch(result) {
+    case 0: document.getElementById("successful").innerHTML = "LOGIN SUCCESS"; break;
+    case 1: document.getElementById("successful").innerHTML = "LOGIN FAILURE"; break;
+    default: console.log("Invalid Login Server Message");
+  }
+}
+```
+4. Create the onmessage function - this uses a function index (in the example, this is the first 3 bytes of the message) to determine what kind of function to route the data through: <br>
+```
+ws.onmessage = (event) => {                             // Whenever a message arrives from the C++ Server
+  let index = event.data.slice(0, 3);                   // Get the function index (sent by C++ server as first 3 digits), and run it's respective function
+  let data = event.data.slice(3, event.data.length);    // Cut the first 3 characters in the string
+
+  // ADD CUSTOM CASES FOR EVERY KIND OF SERVER MESSAGE YOU WILL RECEIVE HERE (if the server returns somthing for that task):
+  switch(i) {
+    case "000": receiveLoginSuccess(data); break;
+    case "001": some-other-function(data); break;
+    default: console.log("Invalid Server Message")
+  }
+};
+```
+
+<br>
+
+**HTML Side of Things** <br>
+On the HTML side of the GUI, simply create some form of input (with unique ID's for reference in JS), and run the relevant JS sender function in (for example) button onclick: <br>
+```
+<textarea id="user">Username</textarea>  <!--- Ensure each input area contains a unique ID (JS uses the ID's to get the data) -->
+<textarea id="pass">Password</textarea>
+<button onclick="sendLoginRequest()"> Login</button>
+```
+
+<br>
+
+**Using the GUI** <br>
+When using the GUI, ensure to run the C++ program before starting the HTML + CSS + JS UI to ensure the JS script is able to properly connect. Other than this, it may be helpful to use an encryption function if running remotely.
+
 
 <br>
 <br>
