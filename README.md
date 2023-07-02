@@ -351,6 +351,27 @@ will display the following when the style is Box:
 <br>
 <br>
 
+## Custom Types
+The Custom Types this repository currently supports are the NetworkLocation and Position. <br>
+
+**Network Location** <br>
+The NetworkLocation struct is able to store an IP Address and Port:
+1. Include NetworkLocation.h: ```#include "NetworkLocation.h"```
+2. Get an IP Address and a Port: ```std::string ip = "some-IP"; int port = 3030;```
+3. Create a NetworkLocation Object: ```NetworkLocation location(port, ip);```
+4. To get the IP and port, simply use the object name, followed by the variable you want to get: ```location.port;```
+
+<br>
+
+**Position** <br>
+The Position struct is able to hold up to 5 variables of any type (types can vary). This is useful as std::pair is limited to only 2!
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
 ## Traceable Ring Signatures
 **Winternitz One-Time Signature Key Generation**
 1. Include Winternitz-Signature.h: ```#include "Winternitz-Signature.h"```
@@ -452,12 +473,3 @@ On the HTML side of the GUI, simply create some form of input (with unique ID's 
 
 **Using the GUI** <br>
 When using the GUI, ensure to run the C++ program before starting the HTML + CSS + JS UI to ensure the JS script is able to properly connect. Other than this, it may be helpful to use an encryption function if running remotely.
-
-
-<br>
-<br>
-<br>
-<br>
-<br>
-
-## Custom Types
