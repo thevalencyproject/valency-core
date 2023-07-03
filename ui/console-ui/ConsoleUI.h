@@ -45,6 +45,8 @@ public:
     template <typename T>
     std::string input(T msg);     // Displays a message and returns a string from the user (single-line and multi-line): takes in a string or vector string
 
+    bool yesOrNo(bool closed);    // Displays a menu with 'Yes' and 'No' as the only options
+
     int menu(std::vector<std::string> options, bool closed);    // Displays a menu - input the options as each vector index and if the menu has a closed top. Returns the user input
 };
 

@@ -181,6 +181,44 @@ std::string ConsoleUI::input(T msg) {
     return getInput();
 }
 
+bool ConsoleUI::yesOrNo(bool closed) {
+    switch(style) {
+    case 0:
+        if(closed) {
+            std::cout << " ______________________________ " << std::endl;
+        }
+        std::cout << "|                              |" << std::endl;
+        std::cout << "|   1. Yes                     |" << std::endl;
+        std::cout << "|   2. No                      |" << std::endl;
+        std::cout << "|______________________________|" << std::endl;
+        std::cout << std::endl << "    -> ";
+        break;
+
+    case 1:
+        std::cout << "1. Yes" << std::endl;
+        std::cout << "2. No" << std::endl;
+        std::cout << std::endl << ": ";
+        break;
+
+    case 2:
+        std::cout << "1 - Yes" << std::endl;
+        std::cout << "2 - No" << std::endl;
+        std::cout << std::endl << "- ";
+        break;
+
+    case 3:
+        std::cout << " -> 1. Yes" << std::endl;
+        std::cout << " -> 2. No" << std::endl;
+        std::cout << std::endl << "-> ";
+        break;
+    }
+
+    if(getInput() == "1")
+        return 1;
+
+    return 0;
+}
+
 int ConsoleUI::menu(std::vector<std::string> options, bool closed) {
     switch(style) {
     case 0:
