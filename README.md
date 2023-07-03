@@ -11,8 +11,9 @@ Each module in this repository is designed to be modular for reuse in other cool
 8. Quicksort
 9. SHA-256 Hashing Algorithm
 10. LZMA Compression Algorithm
-11. Traceable Ring Signatures
-12. GUI Framework
+11. Custom Types
+12. Traceable Ring Signatures
+13. GUI Framework
 <br>
 
 **Scroll Down for Implementation Instructions**
@@ -23,7 +24,7 @@ Each module in this repository is designed to be modular for reuse in other cool
 <br>
 <br>
 
-## Networking Framework
+# Networking Framework
 The networking framework is based on a client-server relationship, and requires custom configuration of some handling functions to achieve your desired functionality. <br>
 There will be an update in the near future introducing multi-threaded networking, however for now it is only single-threaded.<br><br>
 **Client**
@@ -68,7 +69,7 @@ std::string communicate(std::string clientMessage) {
 <br>
 <br>
 
-## Onion Routing
+# Onion Routing
 **Onion Client** <br>
 1. Include Onion.h: ```#include "Onion.h";```
 2. Create an Onion Object: ```Onion onion;```
@@ -109,7 +110,7 @@ std::string communicate(std::string serverMessage) {
 <br>
 <br>
 
-## AES Symmetric Encryption
+# AES Symmetric Encryption
 The AES-Encryption algorithm is used to encrypt and decrypt data using a single key. This framework allows for use of 128bit, 192bit, or 256bit AES-Encryption. The public functions allow for the input and output of either char vector's or strings (char vector step-by-step shown for encryption, and string step-by-step shown for decryption).<br>
 
 <br>
@@ -137,7 +138,7 @@ The AES-Encryption algorithm is used to encrypt and decrypt data using a single 
 <br>
 <br>
 
-## NTRUencrypt Asymmetric Encryption
+# NTRUencrypt Asymmetric Encryption
 **Selectable Parameters**<br>
 This implementation allows for selectable parameters when calling the constructor. The chosen parameters for this implementation of NTRUencrypt come from the table:
 |               | N             | p     | q     | df    | dg    | dr    |       | Constructor Call |
@@ -186,7 +187,7 @@ The keysize is dependant on the strength chosen in the constructor. The private 
 <br>
 <br>
 
-## Random Algorithm
+# Random Algorithm
 **How to Use It:**
 1. Include Random.h: ```#include "Random.h"```
 2. Create a Random Object: ```Random random;```
@@ -200,7 +201,7 @@ The keysize is dependant on the strength chosen in the constructor. The private 
 <br>
 <br>
 
-## Console UI Framework
+# Console UI Framework
 This UI framework takes strings as input for single-line functions, and string vectors for multi-line functions. <br>
 The module supports multiple styles, with the ability to add custom styles (submit a pull request):
 
@@ -277,7 +278,7 @@ will display the following when the style is Box:
 <br>
 <br>
 
-## File Reader and Writer
+# File Reader and Writer
 **File Reader** <br>
 1. Include FileReader.h: ```#include "FileReader.h"```
 2. Create a FileReader Object: ```FileReader reader;```
@@ -299,7 +300,7 @@ will display the following when the style is Box:
 <br>
 <br>
 
-## Quicksort
+# Quicksort
 **How to Use It:**
 1. Include Quicksort.h: ```#include "Quicksort.h"```
 2. Create a QuickSort Object: ```QuickSort qsrt;```
@@ -313,7 +314,7 @@ will display the following when the style is Box:
 <br>
 <br>
 
-## SHA-256 Hashing Algorithm
+# SHA-256 Hashing Algorithm
 **How to Use It:** 
 1. Include SHA256.h: ```#include "SHA256.h"```
 2. Create a SHA256 Object: ```SHA256 sha;```
@@ -327,7 +328,7 @@ will display the following when the style is Box:
 <br>
 <br>
 
-## LZMA Compression Algorithm
+# LZMA Compression Algorithm
 **Setup** <br>
 1. Include LZMA-Compression.h: ```#include "LZMA-Compression.h";```
 2. Create an LZMACompression object: ```LZMACompression lzma;```
@@ -351,7 +352,7 @@ will display the following when the style is Box:
 <br>
 <br>
 
-## Custom Types
+# Custom Types
 The Custom Types this repository currently supports are the NetworkLocation and Position. <br>
 
 **Network Location** <br>
@@ -372,7 +373,7 @@ The Position struct is able to hold up to 5 variables of any type (types can var
 <br>
 <br>
 
-## Traceable Ring Signatures
+# Traceable Ring Signatures
 **Winternitz One-Time Signature Key Generation**
 1. Include Winternitz-Signature.h: ```#include "Winternitz-Signature.h"```
 2. Create a WinternitzSignature Object: ```WinternitzSignature winternitz;```
@@ -396,7 +397,7 @@ The Position struct is able to hold up to 5 variables of any type (types can var
 <br>
 <br>
 
-## GUI Framework
+# GUI Framework
 The GUI Framework enables the communication between a C++ program and a JavaScript function - enabling the use of C++ in totally custom GUI's created using HTML and CSS! This framework relies on a locally-run websocket server on the C++ side, which the JavaScript can easily interface with. <br>
 
 **C++ Side of Things** <br>
