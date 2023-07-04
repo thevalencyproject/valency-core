@@ -10,9 +10,10 @@
 class LZMACompression {
 private:
     unsigned int dictionarySize;
-    std::vector<Position2D> dictionary;
+    std::vector<char> dictionary;
 
-    void initialiseDictionary(unsigned  size);                                                          // Initialises the dictionary with the given size
+    void initialiseDictionary(unsigned  size);                                                          // Initialises the dictionary
+    void addMatchToDictionary(unsigned int distance, unsigned int length);                              // Adds a match to the dictionary
     std::pair<unsigned int, unsigned int> findMatch(std::vector<char> sequence, unsigned  position);    // Finds the longest match of the given sequence in the dictionary
     std::vector<char> processUnmatchedBytes(std::vector<char> unmatchedBytes);                          // Processes the unmatched bytes as literals
     std::pair<unsigned int, unsigned int> encodeLength(unsigned int length);                            // Encodes the given length using LZMA's match length encoding

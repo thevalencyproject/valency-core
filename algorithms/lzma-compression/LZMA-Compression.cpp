@@ -1,10 +1,16 @@
 #include "LZMA-Compression.h"
 
 
-void LZMACompression::initialiseDictionary(unsigned int size) {
+void LZMACompression::initialiseDictionary(unsigned  size) {
     dictionarySize = size;
     dictionary.clear();
     dictionary.resize(size, 0);
+}
+
+void LZMACompression::addMatchToDictionary(unsigned int distance, unsigned int length) {
+    std::vector<char>::iterator start = dictionary.end() - distance;
+    std::vector<char>::iterator end = start + length;
+    dictionary.insert(dictionary.end(), start, end);
 }
 
 std::pair<unsigned int, unsigned int> LZMACompression::findMatch(std::vector<char> sequence, unsigned int position) {
@@ -20,6 +26,8 @@ std::pair<unsigned int, unsigned int> LZMACompression::findMatch(std::vector<cha
         if(length > matchingLength) {
             matchingDistance = dictionary.size() - i;
             matchingLength = length;
+
+            addMatchToDictionary(matchingDistance, matchingLength);     // Add the match to the dictionary
         }
     }
 
@@ -151,15 +159,44 @@ std::vector<char> LZMACompression::compress(std::vector<char> &inputData) {
 
             i++;    // Move to the next byte
         }
+
+        // If there was a match, add it to the dictionary
+        if(match.second > 0)
+            addMatchToDictionary(match.first, match.second);
     }
 
     output = rangeEncode(output);   // Perform range encoding on the output
+
+    output.insert(output.begin(), dictionary.begin(), dictionary.end());    // Add the dictionary to the front of the data
+    output.insert(output.begin(), '.');                                     // Add a locating character '.' to get the size of the dictionary upon decompression
+    output.insert(output.begin(), dictionary.size());                       // Add the size of the dictionary
+
     return output;
 }
 
 std::vector<char> LZMACompression::decompress(std::vector<char> &compressedData) {
-    std::vector<char> output;
+    // Get the size of the dictionary
+    std::string temp;
+    for(int i = 0; i < compressedData.size(); i++)
+        if(compressedData[i] == '.') {
+            for(int j = 0; j < i; j++)
+                temp = temp + compressedData[i];
 
+            compressedData.erase(compressedData.begin(), compressedData.begin() + i);
+            break;
+        }
+
+    dictionarySize = stoi(temp);
+    initialiseDictionary(dictionarySize);
+
+    // Set the dictionary
+    for(int i = 0; i < dictionarySize; i++) {
+        dictionary.push_back(compressedData[0]);
+        compressedData.erase(compressedData.begin());
+    }
+
+    // Decompress the data
+    std::vector<char> output;
     std::vector<char> rangeDecodedData = rangeDecode(compressedData);   // Range Decode the data
 
     for(size_t i = 0; i < rangeDecodedData.size();) {
