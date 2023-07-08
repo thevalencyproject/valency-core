@@ -477,6 +477,10 @@ std::string NTRUencrypt::generatePublicKey(std::string privateKey) {
     return output;
 }
 
+std::string NTRUencrypt::generatePrivateKey(std::string seed) {
+    return generatePrivateKey((int)(seed.c_str()));
+}
+
 std::string NTRUencrypt::encrypt(std::string receiverKey, std::string data) {
     // Receiver Polynomial Int Array Creation
     std::vector<int> indexPosition;

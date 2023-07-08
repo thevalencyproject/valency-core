@@ -55,6 +55,7 @@ public:
 
     std::string generatePublicKey(std::string privateKey);  // Public Key Generator
     std::string generatePrivateKey(int seed);               // Private Key Generator - private key is fPolynomial with gPolynomial attached on the end of it
+    std::string generatePrivateKey(std::string seed);       // Private Key Generator - can take a string as input (cannot use stoi() - convert raw bytes)
 
     std::string encrypt(std::string receiverKey, std::string data);     // Uses string encryption, translates the resultPolynomial into hexadecimal
     std::string decrypt(std::string privateKey, std::string data);      // Uses string decryption, translates data from hexidecimal into a string array
