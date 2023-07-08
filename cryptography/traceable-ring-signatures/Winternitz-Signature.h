@@ -25,6 +25,7 @@ public:
     void generatePublicKey(unsigned char* privateKey, unsigned char* publicKey);
     void generateSignature(unsigned char* message, unsigned char* privateKey, unsigned char* signature);
     std::string generatePrivateKey(size_t seed);
+    std::string generatePrivateKey(std::string seed);
     std::string generatePublicKey(std::string privateKey);
     std::string generateSignature(std::string message, std::string privateKey);
 

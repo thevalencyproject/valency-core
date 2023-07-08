@@ -66,6 +66,10 @@ std::string WinternitzSignature::generatePrivateKey(size_t seed) {
     return output;
 }
 
+std::string WinternitzSignature::generatePrivateKey(std::string seed) {
+    return generatePrivateKey((size_t)(seed.c_str()));
+}
+
 std::string WinternitzSignature::generatePublicKey(std::string privateKey) {
     unsigned char privKey[256];
     unsigned char publicKey[256];
