@@ -51,7 +51,7 @@ std::string Onion::createOnion(std::vector<NodeInfo> nodes, std::string data) {
 }
 
 template<typename T>
-void Onion::onionRouting(std::vector<NodeInfo> nodes, std::string data, std::string (T::*communicate)(std::string)) {
+bool Onion::onionRouting(std::vector<NodeInfo> nodes, std::string data, std::string (T::*communicate)(std::string)) {
     std::string onion = createOnion(nodes, data);
-    c.connectToServer(nodes[0].location.address, nodes[0].location.port, communicate, onion);
+    return c.connectToServer(nodes[0].location.address, nodes[0].location.port, communicate, onion);
 }

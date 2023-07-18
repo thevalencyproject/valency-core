@@ -30,7 +30,7 @@ public:
 
     // Communicate using onion routing - uses a function pointer for communication
     template<typename T>
-    void onionRouting(std::vector<NodeInfo> nodes, std::string data, std::string (T::*communicate)(std::string));
+    bool onionRouting(std::vector<NodeInfo> nodes, std::string data, std::string (T::*communicate)(std::string));
 };
 
 #endif
