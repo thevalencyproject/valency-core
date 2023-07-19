@@ -1,7 +1,7 @@
 #include "Client.h"
 
 
-// Modify this function to achieve your desired outcomes!
+#if defined (__linux__) || (__OpenBSD__) || (__FreeBSD__) || (__NetBSD__) || (__APPLE__)    // UNIX Header
 bool Client::handleConnection(std::string (*communicate)(std::string), std::string initialMessage) {
     int counter = 0;
     std::string message = initialMessage;
@@ -91,3 +91,9 @@ void Client::disconnect() {
     memset(buffer, 0, 4096);            // Zero the message buffer
     memset(&hint, 0, sizeof(hint));     // Zero the hint
 }
+
+
+#elif _WIN32
+
+
+#endif

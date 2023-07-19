@@ -1,6 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
+#if defined (__linux__) || (__OpenBSD__) || (__FreeBSD__) || (__NetBSD__) || (__APPLE__)    // UNIX Header
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -37,5 +38,9 @@ public:
     bool connectToServer(std::string* ip, int* port, std::string (T::*communicate)(std::string), std::string initialMessage);
     void disconnect();
 };
+
+
+#elif _WIN32    // Windows Header
+
 
 #endif
