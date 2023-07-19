@@ -1,6 +1,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#if defined (__linux__) || (__OpenBSD__) || (__FreeBSD__) || (__NetBSD__) || (__APPLE__)    // UNIX Header
 #include <iostream>
 #include <string>
 #include <vector>
@@ -43,5 +44,9 @@ public:
     bool run(int* port, std::string (T::*communicate)(std::string));
     void stop();
 };
+
+
+#elif _WIN32    // Windows Header
+
 
 #endif

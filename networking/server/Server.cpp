@@ -1,7 +1,7 @@
 #include "Server.h"
 
 
-// Modify this function to achieve your desired outcomes!
+#if defined (__linux__) || (__OpenBSD__) || (__FreeBSD__) || (__NetBSD__) || (__APPLE__)    // UNIX Implementation
 bool Server::handleConnection(int clientSocket, std::string (*communicate)(std::string)) {
     int bytesRecv;
     std::string message;
@@ -120,3 +120,9 @@ void Server::stop() {
     memset(&hint, 0, hintSize);     // Zero the hint
     hintSize = 0;                   // Zero the hint size
 }
+
+
+#elif _WIN32    // Windows Implementation
+
+
+#endif
