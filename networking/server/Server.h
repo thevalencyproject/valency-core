@@ -4,7 +4,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#if defined (__linux__) || (__OpenBSD__) || (__FreeBSD__) || (__NetBSD__) || (__APPLE__)    // UNIX Header
+#ifdef __linux__ || __unix__ || __OpenBSD__ || __FreeBSD__ || __NetBSD__ || __APPLE__    // UNIX Implementation
 #include <iostream>
 #include <string>
 #include <vector>
@@ -44,13 +44,11 @@ public:
     std::string errorLog;           // If anything fails, this will automatically be set to the relevant error message
     std::string connectionLog;      // If a connection fails, this will automatically be set to the relevant error message
 
-    template<typename T>
-    bool run(int* port, std::string (T::*communicate)(std::string));
+    bool run(int* port, std::string (*communicate)(std::string));
     void stop();
 };
 
+#elif WIN32 || _WIN32 || __WIN32__ || __NT__    // Windows Implementation
 
-#elif _WIN32    // Windows Header
-
-
+#endif
 #endif
