@@ -73,9 +73,13 @@ bool Server::createSocket(int* port) {
 bool Server::acceptConnection() {
     // Accept the connection
     int clientSocket = accept(listeningSocket, (sockaddr*)&hint, (socklen_t*)&hintSize);
+    if(clientSocket == NULL)   // Return connection error if the accept function returned null
+       return false;
 
     FD_SET(clientSocket, &currentSockets);      // Add the new connection to the list of connected clients
     clientSockets.push_back(clientSocket);      // Add the clientSocket to the client vector
+
+   return true;
 }
 
 template<typename T>
