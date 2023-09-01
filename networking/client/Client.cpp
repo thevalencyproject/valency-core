@@ -4,7 +4,7 @@
 #include "Client.h"
 
 
-#if defined (__linux__) || (__OpenBSD__) || (__FreeBSD__) || (__NetBSD__) || (__APPLE__)    // UNIX Implementation
+#ifdef __linux__ || __OpenBSD__ || __FreeBSD__ || __NetBSD__ || __APPLE__    // UNIX Implementation
 bool Client::handleConnection(std::string (*communicate)(std::string), std::string initialMessage) {
     int counter = 0;
     std::string message = initialMessage;
@@ -95,8 +95,6 @@ void Client::disconnect() {
     memset(&hint, 0, sizeof(hint));     // Zero the hint
 }
 
-
-#elif _WIN32    // Windows Implementation
-
+#elif WIN32 || _WIN32 || __WIN32__ || __NT__    // Windows Implementation
 
 #endif
