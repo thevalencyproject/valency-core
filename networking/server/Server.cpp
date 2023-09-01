@@ -4,7 +4,7 @@
 #include "Server.h"
 
 
-#if defined (__linux__) || (__OpenBSD__) || (__FreeBSD__) || (__NetBSD__) || (__APPLE__)    // UNIX Implementation
+#ifdef __linux__ || __OpenBSD__ || __FreeBSD__ || __NetBSD__ || __APPLE__    // UNIX Implementation
 bool Server::handleConnection(int clientSocket, std::string (*communicate)(std::string)) {
     int bytesRecv;
     std::string message;
@@ -73,17 +73,14 @@ bool Server::createSocket(int* port) {
 bool Server::acceptConnection() {
     // Accept the connection
     int clientSocket = accept(listeningSocket, (sockaddr*)&hint, (socklen_t*)&hintSize);
-    if(clientSocket == NULL)   // Return connection error if the accept function returned null
-       return false;
 
     FD_SET(clientSocket, &currentSockets);      // Add the new connection to the list of connected clients
     clientSockets.push_back(clientSocket);      // Add the clientSocket to the client vector
 
-   return true;
+    return true;
 }
 
-template<typename T>
-bool Server::run(int* port, std::string (T::*communicate)(std::string)) {
+bool Server::run(int* port, std::string (*communicate)(std::string)) {
     if(createSocket(port) == 1)     // Create a listening socket
         return 1;
     
@@ -128,8 +125,6 @@ void Server::stop() {
     hintSize = 0;                   // Zero the hint size
 }
 
-
-#elif _WIN32    // Windows Implementation
-
+#elif WIN32 || _WIN32 || __WIN32__ || __NT__    // Windows Implementation
 
 #endif
