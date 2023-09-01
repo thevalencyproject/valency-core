@@ -4,7 +4,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#if defined (__linux__) || (__OpenBSD__) || (__FreeBSD__) || (__NetBSD__) || (__APPLE__)    // UNIX Header
+#ifdef __linux__ || __unix__ || __OpenBSD__ || __FreeBSD__ || __NetBSD__ || __APPLE__    // UNIX Implementation
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -42,8 +42,7 @@ public:
     void disconnect();
 };
 
+#elif WIN32 || _WIN32 || __WIN32__ || __NT__    // Windows Implementation
 
-#elif _WIN32    // Windows Header
-
-
+#endif
 #endif
