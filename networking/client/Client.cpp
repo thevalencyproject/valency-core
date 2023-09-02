@@ -57,7 +57,7 @@ bool Client::connectToServer(std::string* ip, int* port, std::string (T::*commun
     if(createSocket(*ip, port) == 1 || initialiseConnection() == 1)
         return 1;
     
-    return handleConnection(communicate);
+    return handleConnection(communicate, initialMessage);
 }
 
 bool Client::createSocket(std::string ip, int* port) {
