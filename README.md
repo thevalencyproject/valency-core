@@ -66,7 +66,7 @@ std::string communicate(std::string clientMessage) {
 
 <br>
 
-**Note**
+**Note** <br>
 Please note that if you are using this in a function that is not inside of a class, ensure to remove typename T from both the Server and Client frameworks.
 
 <br>
