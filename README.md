@@ -63,6 +63,12 @@ std::string communicate(std::string clientMessage) {
 6. Run the server - this will automatically communicate with clients using the communicate() function we configured earlier: <br>
 ```server.run(&port, comm);```
 
+
+<br>
+
+**Note**
+Please note that if you are using this in a function that is not inside of a class, ensure to remove typename T from both the Server and Client frameworks.
+
 <br>
 <br>
 <br>
